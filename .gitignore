@@ -1,2 +1,5 @@
 makefile
 /test
+*.out
+*.o
+
