@@ -1,5 +1,6 @@
 makefile
 /test
 *.out
+/testcase
 *.o
 
