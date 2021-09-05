@@ -39,7 +39,7 @@ std::vector<int> create_vec(csw<int> &matr, bool (*func)(int)){
 
 //checks for palindrome
 bool crit(int z){
-    std::string s = std::to_string(z); 
+    std::string s = std::to_string(z);
     if(s.length() == 1 || (s.length() == 2 && z / 10 == z % 10)){
         return true;
     }
@@ -53,4 +53,3 @@ bool crit(int z){
     }
     return true;
 }
-
