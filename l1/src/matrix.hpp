@@ -71,6 +71,7 @@ class csw : line<T>{
     public:
         csw():total_height(0), total_width(0){}
         csw(int width, int height);
+        csw(const std::vector<std::vector<T>> &x);
         inline int size(){ return this->total_height;}
         inline int width(){ return this->total_width;}
 
@@ -147,6 +148,18 @@ csw<T>::csw(int width, int height){
     }
 }
 
+template <typename T>
+csw<T>::csw(const std::vector<std::vector<T>> &x){
+    this->csw(x.length(), x[0].length());
+    for(int i = 0; i < x.length(); i++){
+        for(int j = 0; j < x[0].length(); j++){
+            if(x[i][j] != 0){
+                this->add(i, j, x[i][j]);
+            }
+        }
+    }
+
+}
 
 template <typename T>
 void csw<T>::add(int ind_x, int ind_y, T v){
