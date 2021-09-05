@@ -1,7 +1,5 @@
 #include "matrix.hpp"
 
-
-using namespace std;
 csw<int> init_matr(){
     int m, n, el;
     std::cout << "input matrix height: ";
@@ -21,9 +19,9 @@ csw<int> init_matr(){
     return matr;
 }
 
-vector<int> create_vec(csw<int> &matr, bool (*func)(int)){
+std::vector<int> create_vec(csw<int> &matr, bool (*func)(int)){
     int sum = 0;
-    vector<int> ans;
+    std::vector<int> ans;
     for(auto i: matr.lines()){
         sum = 0;
         for(auto j: i.els()){

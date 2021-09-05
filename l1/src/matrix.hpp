@@ -7,27 +7,6 @@
 #define MAIN_MATRIX
 
 template <typename T>
-void get_el(T &x){
-    try{
-        T n;
-        std::cin >> n;
-        x = n;
-    }
-    catch(std::exception&e){
-        std::cerr << e.what();
-    }
-}
-
-template <typename T>
-std::ostream&operator<<(std::ostream& out,const std::vector<T> &x){
-    for(auto i: x){
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
-    return out;
-} 
-
-template <typename T>
 class el{
     public:
         el(int ind = 0, T val = 0):_ind(ind), _val(val){}
@@ -161,4 +140,27 @@ class csw : line<T>{
 csw<int> init_matr();
 std::vector<int> create_vec(csw<int> &matr,bool (*function)(int));
 bool crit(int);
+
+
+template <typename T>
+void get_el(T &x){
+    try{
+        T n;
+        std::cin >> n;
+        x = n;
+    }
+    catch(std::exception&e){
+        std::cerr << e.what();
+    }
+}
+
+template <typename T>
+std::ostream&operator<<(std::ostream& out,const std::vector<T> &x){
+    for(auto i: x){
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+    return out;
+} 
+
 #endif
