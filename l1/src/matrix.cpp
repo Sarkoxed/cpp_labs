@@ -1,5 +1,4 @@
 #include "matrix.hpp"
-
 csw<int> init_matr(){
     int m, n, el;
     std::cout << "input matrix height: ";
@@ -53,3 +52,19 @@ bool crit(int z){
     }
     return true;
 }
+
+bool crit1(int z){
+    int prev, cur;
+    prev = z % 10;
+    z /= 10;
+    while(z != 0){
+        cur = z % 10;
+        if(cur == prev){
+            return true;
+        }
+        z /= 10;
+        prev = cur;
+    }
+    return false;
+}
+

@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <limits>
 
 #ifndef MAIN_MATRIX
 #define MAIN_MATRIX
@@ -150,7 +151,7 @@ csw<T>::csw(int width, int height){
 
 template <typename T>
 csw<T>::csw(const std::vector<std::vector<T>> &x){
-    this->csw(x.length(), x[0].length());
+    csw(x.length(), x[0].length());
     for(int i = 0; i < x.length(); i++){
         for(int j = 0; j < x[0].length(); j++){
             if(x[i][j] != 0){
@@ -197,18 +198,26 @@ csw<int> init_matr();
 std::vector<int> create_vec(csw<int> &matr,bool (*function)(int));
 
 bool crit(int);
-
+bool crit1(int);
 
 template <typename T>
 void get_el(T &x){
-    try{
-        T n;
-        std::cin >> n;
-        x = n;
-    }
-    catch(std::exception&e){
-        std::cerr << e.what();
-    }
+    bool valid;
+    do{
+        try{
+            valid = true;
+            std::cin >> x;
+            if(std::cin.fail()){
+                throw false;
+            }
+        }
+        catch(bool e){
+            valid = e;
+            std::cerr << "Wrong input, retry" << std::endl;
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }while(!valid);
 }
 
 template <typename T>
