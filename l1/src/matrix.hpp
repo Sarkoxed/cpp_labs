@@ -38,10 +38,8 @@ class line{
         inline void add(el<T> x){ this->_els.push_back(x); }
 
         void del(int ind);
-        int get(int ind);
-
-        std::vector<el<T>> els(){ return this->_els; }
-
+        size_t get(size_t ind);
+        inline std::vector<el<T>> els(){return this->_els; }
         el<T> operator[](int index);
 
         void debug_print();
@@ -73,16 +71,16 @@ class csw : line<T>{
         csw():total_height(0), total_width(0){}
         csw(int width, int height);
         csw(const std::vector<std::vector<T>> &x);
-        inline int size(){ return this->total_height;}
+        
+        inline std::vector<line<T>> lines(){ return this->_lines;}
+        inline int length(){ return this->total_height;}
         inline int width(){ return this->total_width;}
 
         void add(int ind_x, int ind_y, T v) ;
         void del(int ind_x);
         void del(int ind_x, int ind_y);
         void debug_print();
-
-        inline std::vector<line<T>> lines(){return this->_lines;}
-
+        
         inline line<T> operator[](int index){return this->lines[index];}
 
         friend std::ostream& operator<<(std::ostream& out,const csw<T> &x){
@@ -114,8 +112,8 @@ void line<T>:: del(int ind){
 }
 
 template <typename T>
-int line<T>::get(int ind){
-    int beg = 0, end = this->size() - 1;
+size_t line<T>::get(size_t ind){
+    size_t beg = 0, end = this->size() - 1;
     while(beg <= end ){
         int m = (end + beg) / 2;
         if(this->_els[m].ind() < ind){
