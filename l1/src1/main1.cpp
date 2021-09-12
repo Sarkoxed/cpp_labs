@@ -19,6 +19,4 @@ int main(){
             x.append(i, tmp);
         }
     }
-
-    cout << x;
 }

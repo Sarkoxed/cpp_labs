@@ -5,39 +5,61 @@
 #ifndef LINE_HEADER
 #define LINE_HEADER
 
-template <typename T> class line;
-template <typename T> class el;
+template <class T> class line;
+template <class T> class el;
 
-template <typename T>
+template <class T>
 class el{
     public:
         el(){}
         el(size_t ind_t, T val):_ind(ind_t), _val(val){}
         size_t ind(){ return this->_ind;}
         T val(){ return this->_val;}
+
+        el<T>& operator=(el<T> &eq){
+            this->_ind = eq.ind();
+            this->_val = eq.val();
+            return *this;
+        }
     protected:
         size_t _ind;
         T _val;
 };
 
+template <class T>
+bool operator==(const el<T> &a, const el<T> &b){
+    return a.ind() == b.ind() && a.val() == b.val();
+}
 
-template <typename T>
+
+template <class T>
 class line : public el<T>{
     public:
        inline line(size_t len = 0){
            this->_length = 0;
            this->_total_length = len;
            this->_elems = nullptr;
+      }
+       
+      line<T>& operator=(line<T> &eq){
+           if(this != &eq){
+               delete [] this->_elems;
+               this->_length = eq.length();
+               this->_total_length = eq.total_length();
+               this->_elems = new (std::nothrow) el<T> [eq.length()];
+               for(size_t i = 0; i < eq.length(); i++){
+                   this->_elems[i] = eq.begin()[i];
+               }
+           }
+           return *this;
        }
-//       line& operator=(const line &eq){
-//           return *this;
-//       }
+       
        line(const T *cont, size_t len);
        line(const std::vector<T> &cont);
         
-       inline size_t length(){ return this->_length;}
+       inline  size_t length(){ return this->_length;}
+       inline  size_t total_length(){ return this->_total_length;}
        void append(size_t ind, T val);
-       //void insert(size_t ind, T val); maybe later
        void del(size_t ind);
        T operator[](size_t ind);
        int get(size_t ind);
@@ -71,7 +93,7 @@ class line : public el<T>{
         size_t _total_length;
 };
 
-template <typename T>
+template <class T>
 line<T>::line(const T *cont, size_t len){
     this->_elems = new (std::nothrow) el<T> [len];
     this->_length = len;
@@ -85,7 +107,7 @@ line<T>::line(const T *cont, size_t len){
     this->resize(tmp);
 }
 
-template <typename T>
+template <class T>
 line<T>::line(const std::vector<T> &x){
     this->_elems = new (std::nothrow) el<T> [1];
     this->_length = x.size();
@@ -99,7 +121,7 @@ line<T>::line(const std::vector<T> &x){
     this->resize(tmp);
 }
 
-template <typename T>
+template <class T>
 void line<T>:: resize(size_t newsize){
     el<T> *tmp = this->_elems;
     if(newsize == 0){
@@ -113,20 +135,23 @@ void line<T>:: resize(size_t newsize){
         this->_elems[i] = tmp[i];
     }
     this->_length = newsize;
-    delete [] tmp;
+    if(tmp != nullptr){
+        delete [] tmp;
+    }
 }
 
-template <typename T> //something to do
+template <class T> //something to do
 void line<T>:: append(size_t ind, T val){
    resize(this->_length+1);
-   el<T> x = el<T>(ind, val);
+   el<T> x;
+   x = el<T>(ind, val);
    this->_elems[this->_length - 1] = x;
 }
 
-template <typename T>
+template <class T>
 int line<T>::get(size_t ind){
     size_t beg = 0, end = this->_length - 1;
-    if(ind > this->_total_length-1 || ind < beg){
+    if(ind > this->_total_length-1){
         throw "out of range";
         return -2;
     }
@@ -148,7 +173,7 @@ int line<T>::get(size_t ind){
     return -1;
 }
 
-template <typename T>
+template <class T>
 void line<T>:: del(size_t ind){
     int dind = this->get(ind);
     if(dind == -1){
@@ -162,7 +187,7 @@ void line<T>:: del(size_t ind){
     resize(this->_length - 1);
 }
 
-template <typename T>
+template <class T>
 T line<T>:: operator[](size_t ind){
     int gind = this->get(ind);
     if(gind == -1){
@@ -173,7 +198,7 @@ T line<T>:: operator[](size_t ind){
     return this->_elems[static_cast<size_t>(gind)].val();
 }
 
-template <typename T>
+template <class T>
 void line<T>:: debug_print(){
     for(size_t i = 0; i < this->_length; i++){
         std::cout << "(";
@@ -184,10 +209,23 @@ void line<T>:: debug_print(){
     }
 }
 
-template <typename T>
+template <class T>
 line<T>::~line(){
     delete [] this->_elems;
 }
 
+template <typename T>
+bool operator==(const line<T> &a, const line<T> &b){
+    if(a.length() != b.length() || a.total_length() != b.total_length()){
+        return false;
+    }
 
+    for(size_t i = 0; i <= a.length(); i++){
+        if(a.begin()[i] != b.begin()[i]){
+            return false;
+        }
+    }
+
+    return true;
+}
 #endif

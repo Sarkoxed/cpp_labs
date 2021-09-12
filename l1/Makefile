@@ -8,7 +8,7 @@ CPPFLAGS = -Wall
 #CFLAGS += -Wfloat-equal
 CPPFLAGS += -Wextra
 CPPFLAGS += -pedantic
-CPPFLAGS += -Werror
+#CPPFLAGS += -Werror
 #CPPFLAGS += -Wmissing-declarations
 #CPPFLAGS += -fstack-protector-all
 
@@ -37,6 +37,13 @@ build: src/*.cpp src/*.hpp
 	@echo Building
 	@#$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) src/*.cpp -o task.out $(LIBS)
 	clang++ -g -ggdb -W -Wall -Wextra -Werror src/*.cpp -o task.out -lm
+
+.PHONY: better
+better: src1/*.cpp src1/*.hpp
+	@echo Building
+	@#$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) src/*.cpp -o task.out $(LIBS)
+	clang++ -g -ggdb -W -Wall -Wextra  src1/*.cpp -o task.out -lm
+
 
 .PHONY: sanitize
 sanitize: src/*.cpp src/*.hpp
