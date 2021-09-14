@@ -1,11 +1,12 @@
 #include "matrix.hpp"
+
 csw<int> init_matr(){
     int m, n, el;
     std::cout << "input matrix height: ";
     get_el(m);
     std::cout << "input matrix width: ";
     get_el(n);
-    csw<int> matr = csw<int>(n, m);
+    csw<int> matr(m,n);
     for(int i = 0; i < m; i++){
         for(int j = 0; j < n; j++){
             std::cout << "element " << i << "," <<  j << " : ";
@@ -19,17 +20,15 @@ csw<int> init_matr(){
 }
 
 std::vector<int> create_vec(csw<int> &matr, bool (*func)(int)){
-    int sum = 0;
     std::vector<int> ans;
-    for(auto i: matr.lines()){
-        sum = 0;
-        for(auto j: i.els()){
-            if(func(j.val())){
-                sum += j.val();
+    for(size_t i = 0; i < matr.height(); i++){
+        int sum = 0;
+        for(auto tmp = (*matr[i]).begin(); tmp != (*matr[i]).end()+1; tmp++){
+            if(func((*tmp).val())){
+                sum += (*tmp).val();
             }
         }
         ans.push_back(sum);
-
     }
     return ans;
 }
@@ -54,11 +53,11 @@ bool crit(int z){
 }
 
 bool crit1(int z){
-    int prev, cur;
+    int prev;
     prev = z % 10;
     z /= 10;
     while(z != 0){
-        cur = z % 10;
+        int cur = z % 10;
         if(cur == prev){
             return true;
         }
@@ -67,4 +66,3 @@ bool crit1(int z){
     }
     return false;
 }
-

@@ -10,7 +10,7 @@ class csw : public line<T>{
         csw<T>& operator=(const csw<T> &cp){
             if(!(*this == cp)){
                 delete [] this->_lines;
-                this->_heigth = cp.height();
+                this->_height = cp.height();
                 this->_width = cp.width();
                 this->_lines = new line<T>[this->_height];
                 std::copy(cp.begin(), cp.end()-1, this->_lines);
@@ -19,7 +19,7 @@ class csw : public line<T>{
         }
 
         csw(const csw<T> &cp){
-            this->_heigth = cp.height();
+            this->_height = cp.height();
             this->_width = cp.width();
             this->_lines = new line<T>[this->_height];
             std::copy(cp.begin(), cp.end()-1, this->_lines);
@@ -41,9 +41,9 @@ class csw : public line<T>{
 
         void add(size_t ind_y, size_t ind_x, T val){ this->_lines[ind_y].append(ind_x, val); }
 
-        line<T> operator[](size_t ind){
+        line<T>* operator[](size_t ind){
           if(ind < this->_height){
-              return this->_lines[ind];
+              return this->_lines + ind;
           }
           
           throw std::out_of_range("operator []");
@@ -53,12 +53,24 @@ class csw : public line<T>{
 
         line<T>* begin(){ return this->_lines; };
         line<T>* end(){ return this->_lines + this->_height; }
+        size_t height() const { return this->_height;};
+        size_t width() const { return this->_width;};
+
+        line<T>* begin() const { return this->_lines; };
+        line<T>* end() const { return this->_lines + this->_height; }
 
         friend std::ostream& operator<<(std::ostream& out, csw<T> &x){
             for(auto i = x.begin(); i != x.end(); ++i){
               std::cout << *i << std::endl;
             }
             return out;
+        }
+
+        void debug_print(){
+           for(auto i = this->begin(); i != this->end(); ++i){
+               (*i).debug_print();
+               std::cout << std::endl;
+           }
         }
 
     private:
