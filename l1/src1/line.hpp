@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <new>
 
@@ -11,16 +12,30 @@ template <class T> class el;
 template <class T>
 class el{
     public:
-        el(){}
-        el(size_t ind_t, T val):_ind(ind_t), _val(val){}
+        el():_ind(0), _val(0){}
+        el(size_t ind_t, T val){
+            this->_ind = ind_t;
+            this->_val = val;
+        }
+
+        el(const el<T> &cp){
+            this->_ind = cp.ind();
+            this->_val = cp.val();
+        }
+
+        el<T>& operator=(const el<T> &eq){
+          this->_ind = eq._ind;
+          this->_val = eq._val;
+          return *this;
+        }
+
         size_t ind(){ return this->_ind;}
         T val(){ return this->_val;}
+        
+        size_t ind() const { return this->_ind;}
+        T val() const { return this->_val;}
 
-        el<T>& operator=(el<T> &eq){
-            this->_ind = eq.ind();
-            this->_val = eq.val();
-            return *this;
-        }
+
     protected:
         size_t _ind;
         T _val;
@@ -35,30 +50,41 @@ bool operator==(const el<T> &a, const el<T> &b){
 template <class T>
 class line : public el<T>{
     public:
-       inline line(size_t len = 0){
-           this->_length = 0;
-           this->_total_length = len;
-           this->_elems = nullptr;
+      line():_length(0), _total_length(0), _elems(nullptr){}
+
+      explicit line(size_t len_t){
+          this->_length = 0;
+          this->_total_length = len_t;
+          this->_elems = nullptr;
       }
-       
+
       line<T>& operator=(line<T> &eq){
-           if(this != &eq){
+           if(!(*this == eq)){
                delete [] this->_elems;
                this->_length = eq.length();
                this->_total_length = eq.total_length();
-               this->_elems = new (std::nothrow) el<T> [eq.length()];
-               for(size_t i = 0; i < eq.length(); i++){
-                   this->_elems[i] = eq.begin()[i];
-               }
+               this->_elems = new  el<T> [eq.length()];
+               std::copy(eq.begin(), eq.end(), this->_elems);
            }
            return *this;
        }
+
+       explicit line(const line<T> &cp){
+            this->_length = cp.length();
+            this->_total_length = cp.total_length();
+            this->_elems = new  el<T> [cp.length()];
+            std::copy(cp.begin(), cp.end(), this->_elems);
+       }
+
+       explicit line(const T *cont, const size_t &len);
+       explicit line(const std::vector<T> &cont);
+
+       inline size_t length(){ return this->_length;}
+       inline size_t total_length(){ return this->_total_length;}
        
-       line(const T *cont, size_t len);
-       line(const std::vector<T> &cont);
-        
-       inline  size_t length(){ return this->_length;}
-       inline  size_t total_length(){ return this->_total_length;}
+       inline size_t length() const { return this->_length;}
+       inline size_t total_length() const { return this->_total_length;}
+       
        void append(size_t ind, T val);
        void del(size_t ind);
        T operator[](size_t ind);
@@ -67,35 +93,49 @@ class line : public el<T>{
        void resize(size_t newsize);
        el<T> * begin(){ return this->_elems; }
        el<T> * end(){return this->_elems + this->_length - 1;}
-        
-       friend std::ostream& operator<<(std::ostream& out, line<T> &x){
+       
+       el<T> * begin() const { return this->_elems; }
+       el<T> * end() const {return this->_elems + this->_length - 1;}
+
+
+       friend std::ostream& operator<<(std::ostream& out,line<T> &x){
             size_t of = 0;
-            auto *b = x.begin();
             for(size_t i = 0; i < x.length(); i++){
-                for(; of < (*b).ind(); of++){
+                for(; of < x.begin()[i].ind(); of++){
                     std::cout << 0 << " ";
                 }
-                std::cout << x._elems[i].val();
-                std::cout << " ";
-                b++;
+                std::cout << x.begin()[i].val() << " ";
                 of++;
             }
-            for(; of < x._total_length; of++){
-                std::cout << 0 << " ";
-            }
+            for(; of < x._total_length; of++){ std::cout << 0 << " "; }
             return out;
         }
+        
+        friend bool operator==(const line<T> &a, const line<T> &b){
+            if(a.length() != b.length() || a.total_length() != b.total_length()){
+                return false;
+            }
 
-       ~line();
+            for(size_t i = 0; i <= a.length(); i++){
+                if(!(a.begin()[i] == b.begin()[i])){
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        ~line();
+
     protected:
-        el<T> *_elems;
         size_t _length;
         size_t _total_length;
+        el<T> *_elems;
+
 };
 
 template <class T>
-line<T>::line(const T *cont, size_t len){
-    this->_elems = new (std::nothrow) el<T> [len];
+line<T>::line(const T *cont, const size_t &len){
+    this->_elems = new  el<T> [len];
     this->_length = len;
     this->_total_length = len;
     size_t tmp = 0;
@@ -109,7 +149,7 @@ line<T>::line(const T *cont, size_t len){
 
 template <class T>
 line<T>::line(const std::vector<T> &x){
-    this->_elems = new (std::nothrow) el<T> [1];
+    this->_elems = new  el<T> [x.size()];
     this->_length = x.size();
     this->_total_length = x.size();
     size_t tmp = 0;
@@ -130,7 +170,7 @@ void line<T>:: resize(size_t newsize){
         this->_length = 0;
         return;
     }
-    this->_elems = new (std::nothrow) el<T>[newsize];
+    this->_elems = new  el<T>[newsize];
     for(size_t i = 0; i < this->_length && i < newsize; i++){
         this->_elems[i] = tmp[i];
     }
@@ -143,17 +183,14 @@ void line<T>:: resize(size_t newsize){
 template <class T> //something to do
 void line<T>:: append(size_t ind, T val){
    resize(this->_length+1);
-   el<T> x;
-   x = el<T>(ind, val);
-   this->_elems[this->_length - 1] = x;
+   this->_elems[this->_length - 1] = el<T>(ind, val);
 }
 
 template <class T>
 int line<T>::get(size_t ind){
     size_t beg = 0, end = this->_length - 1;
     if(ind > this->_total_length-1){
-        throw "out of range";
-        return -2;
+        throw std::out_of_range("get");
     }
     while(beg <= end){
         int m = (end + beg) / 2;
@@ -214,18 +251,5 @@ line<T>::~line(){
     delete [] this->_elems;
 }
 
-template <typename T>
-bool operator==(const line<T> &a, const line<T> &b){
-    if(a.length() != b.length() || a.total_length() != b.total_length()){
-        return false;
-    }
 
-    for(size_t i = 0; i <= a.length(); i++){
-        if(a.begin()[i] != b.begin()[i]){
-            return false;
-        }
-    }
-
-    return true;
-}
 #endif

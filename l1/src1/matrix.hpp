@@ -4,8 +4,7 @@
 #ifndef MAIN_LIB
 #define MAIN_LIB
 
-
-csw<int> init_matr();
+void init_matr(csw<int> &matr);
 
 std::vector<int> create_vec(csw<int> &matr,bool (*function)(int));
 
