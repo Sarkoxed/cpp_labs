@@ -20,7 +20,15 @@ int main(){
             s = "double-digits";
             break;
         default:
+            std::cerr << "Bad input" << std::endl;
             exit(1);
     }
     std::cout << "Sum of " << s << " of each line is: " << ans;
 }
+
+// try{
+//   s = matr[40];
+// }
+// catch(const std::exception &e){
+//  std::cerr << e.what() << std::endl;
+// }

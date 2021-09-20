@@ -18,14 +18,6 @@ DEBUGFLAGS += -ggdb
 ASANFLAGS = -fsanitize=address
 #ASANFLAGS += -fno-common
 #ASANFLAGS += -fno-omit-frame-pointer
-
-MSANFLAGS = -fsanitize=memory
-#MSANFLAGS += -fno-omit-frame-pointer
-#MSANFLAGS += -fsanitize-memory-use-after-dtor
-#MSANFLAGS += -fsanitize-memory-track-origins=2
-
-UBSANFLAGS = -fsanitize=undefined
-
 AFLFLAGS = -Ofast
 
 
