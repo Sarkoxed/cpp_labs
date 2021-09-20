@@ -1,20 +1,33 @@
 #include <iostream>
 #include <vector>
+#include <limits>
 
 #ifndef TOOL_LIB
 #define TOOL_LIB
 
 template <typename T>
 void get_el(T &x){
-    try{
-        T n;
-        std::cin >> n;
-        x = n;
-    }
-    catch(std::exception&e){
-        std::cerr << e.what();
-    }
+    bool valid;
+    do{
+        try{
+            valid = true;
+            std::cin >> x;
+        }
+        catch(const std::ios_base::failure &e){
+            std::cerr << "Wrong input";
+            if(std::cin.bad() || std::cin.eof()){
+                std::cerr << ", bye" << std::endl;
+                exit(0);
+            }
+            valid = false;
+            std::cerr << ", retry" << std::endl; 
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }while(!valid);
 }
+
+
 
 template <typename T>
 std::ostream&operator<<(std::ostream& out,const std::vector<T> &x){
