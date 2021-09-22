@@ -6,24 +6,33 @@
 namespace hypo{
     enum class hypotypes : short{normal, extended, shortened}; 
     
-    std::ostream& operator<<(std::ostream &out, hypotypes x){
-        switch (x){
-            case hypotypes::normal: std::cout << "normal" << std::endl;
-            case hypotypes::extended: std::cout << "extended" << std::endl;
-            case hypotypes::shortened: std::cout << "shortened" << std::endl;
-        }
-       return out; 
-    }
-    
-    template <typename T>
+    template <typename T, typename H>
     class pair{
         public:
-            pair(T f, T s):_first(f), _second(s){}
+            pair():_first(0.0), _second(0.0){}
+            pair(T f, H s):_first(f), _second(s){}
             T x() const {return this->_first;}
-            T y() const {return this->_second;}
+            H y() const {return this->_second;}
+            
+            pair<T, H>& operator=(const pair<T, H> &e){
+                this->_first = e._first;
+                this->_second = e._second;
+                return *this;
+            }
+            pair(const pair<T,H> &x){
+                this->_first = x._first;
+                this->_second = x._second;
+            }
+
+            friend std::ostream& operator<<(std::ostream &out, const pair<T, H> &x){
+                std::cout << "(" << x._first << ", " << x._second << ") " << std::endl;
+                return out;
+            }
+
+
         private: 
             T _first;
-            T _second;
+            H _second;
     };
     
     class hypocycloid{
@@ -70,20 +79,20 @@ namespace hypo{
     
             
 
-            double get_r(double r) const {return this->_r;}
-            double get_k(double k) const {return this->_k;}
-            double get_d(double d) const {return this->_d;}
+            double get_r() const {return this->_r;}
+            double get_k() const {return this->_k;}
+            double get_d() const {return this->_d;}
     
             hypotypes get_type() const;
-            pair<double> get_point(double phi){
-                return pair<double>(get_x(phi), get_y(phi));
+            pair<double, double> get_point(double phi){
+                return pair<double, double>(get_x(phi), get_y(phi));
             }
     
             double sectorial_area() const; 
             
             double curvative_radius(double phi) const;
             
-            pair<double> get_rs(){ return pair<double>(this->_r, this->_r * this->_k);}
+            pair<double, double> get_rs(){ return pair<double, double>(this->_r, this->_r * this->_k);}
     
         private:
             double get_x(double phi){ return this->_r * (this->_k - 1) * cos(phi) + this->_d * cos((this->_k - 1) * phi);}
