@@ -12,9 +12,12 @@ void get_el(T &x){
         try{
             valid = true;
             std::cin >> x;
+            if(std::cin.fail()){
+                throw "bad input";
+            }
         }
-        catch(const std::ios_base::failure &e){
-            std::cerr << "Wrong input";
+        catch(const char * &e){
+            std::cerr << e;
             if(std::cin.bad() || std::cin.eof()){
                 std::cerr << ", bye" << std::endl;
                 exit(0);
