@@ -3,7 +3,9 @@
 #include <string>
 #include <fstream>
 
-using namespace hypo;
+using namespace curve;
+
+ 
 
 void help(){
     std::cout << "0 to get help" << std::endl;
@@ -32,9 +34,7 @@ int main(){
     while(true){
         std::cout << "do ->";
         get_el(ch);
-        switch (ch){
-            case 1: 
-                std::cout << "small radius: "<< a.get_r() << std::endl; 
+        switch (ch){ case 1: std::cout << "small radius: "<< a.get_r() << std::endl; 
                 continue;
             case 2: 
                 std::cout << "coef: "<< a.get_k() << std::endl; 
@@ -59,8 +59,7 @@ int main(){
                     a.set_k(k);
                 }
                 catch(const char* &e){
-                    std::cerr << e << std::endl;
-                }
+                    std::cerr << e << std::endl; }
                 continue;
             case 6: 
                 std::cout << "input d: "; 
@@ -115,30 +114,19 @@ int main(){
                 std::cout << "area: " << a.sectorial_area() << std::endl;
                 continue;
             case 13:
-              {
-              hypotypes x = a.get_type();
-              switch (x){
-                case hypotypes::normal:
-                    std::cout << "normal" << std::endl;
-                    break;
-                case hypotypes::extended: 
-                    std::cout << "extended" << std::endl;
-                    break;
-                case hypotypes::shortened: 
-                    std::cout << "shortened" << std::endl;
-                    break;
-                default:
-                    throw "this might not happen"; 
-                }
-   }            continue;
+              std::cout << a.get_type();
+              continue;
+
             case 14://not working
                 {
                     std::string filename;
+                    std::cout << "input filename: ";
                     get_el(filename);
                     std::ofstream ff;
                     ff.open(filename);
-                    for(int i = 1000; i > 0; i--){
-                        ff << a.get_point(2*M_PI / i) << " ";
+                    for(int i = 1; i < 1000; i++){
+                        pair<double, double> x = a.get_point(M_PI*i / 500.0 );
+                        ff << "(" << x.x() << ", " << x.y() << ")\n";
                     }
                     ff.close();
                 }

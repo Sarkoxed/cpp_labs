@@ -3,10 +3,9 @@
 
 #ifndef LIM_CYCLE
 #define LIM_CYCLE
-namespace curve{
+namespace hypo{
     enum class hypotypes : short{normal, extended, shortened}; 
     
-
     template <typename T, typename H>
     class pair{
         public:
@@ -29,8 +28,7 @@ namespace curve{
                 std::cout << "(" << x._first << ", " << x._second << ") " << std::endl;
                 return out;
             }
-
-            friend std::fstream& operator<<(std::fstream &out, const pair<T,H> &x){
+            friend std::ofstream& operator<<(std::ofstream &out, const pair<T,H> &x){
                 std::cout << "(" << x._first << ", " << x._second << ") " << std::endl;
                 return out;
 
@@ -42,14 +40,9 @@ namespace curve{
             H _second;
     };
     
-
-
-
-
     class hypocycloid{
         public:
             hypocycloid():_r(1.0), _k(1.0), _d(1.0){}
-
             hypocycloid(double r, double k):_r(r), _k(k), _d(r){
                 if(r <= 0.0 || k <= 0.0){
                     throw "no z-negative allowed";
@@ -63,33 +56,57 @@ namespace curve{
 
             hypocycloid(const hypocycloid &x):_r(x._r), _k(x._k), _d(x._d){}
 
-            hypocycloid& operator=(const hypocycloid &x);                        
-            void set_r(double r);
-            void set_k(double k);
-            void set_d(double d);            
+            hypocycloid& operator=(const hypocycloid &x){
+                this->_r = x._r;
+                this->_k = x._k;
+                this->_d = x._d;
+                return *this;
+            }
+                        
+            void set_r(double r){ 
+                if(r <= 0.0){
+                    throw "no z-negative allowed";
+                }
+                this->_r = r;
+            }
+            void set_k(double k){ 
+                if(k <= 0.0){
+                    throw "no z-negative allowed";
+                }
+                this->_k = k;
+            }
+            void set_d(double d){ 
+                if(d <= 0.0){
+                    throw "no z-negative allowed";
+                }
+                this->_d = d;
+            }
+    
+            
 
             double get_r() const {return this->_r;}
             double get_k() const {return this->_k;}
             double get_d() const {return this->_d;}
     
             hypotypes get_type() const;
-
-            pair<double, double> get_point(double phi);    
+            pair<double, double> get_point(double phi){
+                return pair<double, double>(get_x(phi), get_y(phi));
+            }
+    
             double sectorial_area() const; 
+            
             double curvative_radius(double phi) const;
             
-            pair<double, double> get_rs();
+            pair<double, double> get_rs(){ return pair<double, double>(this->_r, this->_r * this->_k);}
+    
         private:
-
-            double get_x(double phi);
-            double get_y(double phi);
-
+            double get_x(double phi){ return this->_r * (this->_k - 1) * cos(phi) + this->_d * cos((this->_k - 1) * phi);}
+            double get_y(double phi){ return this->_r * (this->_k - 1) * sin(phi) - this->_d * sin((this->_k - 1) * phi);}
+            
             double _r;
             double _k;
             double _d;
     };
 
 }
-
-    std::ostream& operator<<(std::ostream &out, curve::hypotypes x);
 #endif 

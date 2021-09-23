@@ -48,7 +48,7 @@ better: src1/*.cpp src1/*.hpp
 .PHONY: sanitize
 sanitize: src/*.cpp src/*.hpp
 	@echo Running ASAN
-	@$(CC) $(ASANFLAGS) $(CPPFLAGS) $(DEBUGFLAGS) src/*.cpp -o asan.out $(LIBS)
+	@$(CXX) $(ASANFLAGS) $(CPPFLAGS) $(DEBUGFLAGS) src/*.cpp -o asan.out $(LIBS)
 	@echo "ASAN passed"
 
 asan.out: sanitize
