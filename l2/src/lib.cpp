@@ -23,13 +23,21 @@ double hypocycloid:: curvative_radius(double phi) const {
     return (this->_k + 1.0) * pow(this->_r * this->_r + this->_d * this->_d - 2.0 * this->_r * this->_d * cos(this->_k * phi), 1.5) / fabs(pow(this->_r, 2.0) + pow(this->_d, 2.0) * (this->_k + 1.0) - this->_r * this->_d * (this->_k + 2.0)*cos(this->_k * phi));
 }
 
-std::ostream& operator<<(std::ostream &out,const hypotypes &x){
-   switch (x){
-      case hypotypes::normal: std::cout << "normal" << std::endl;
-      case hypotypes::extended: std::cout << "extended" << std::endl;
-      case hypotypes::shortened: std::cout << "shortened" << std::endl;
-   }
-   return out; 
-}
+//std::ostream& operator<<(std::ostream &out,hypotypes x){
+//   switch (x){
+//      case hypotypes::normal:
+//          std::cout << "normal" << std::endl;
+//          break;
+//      case hypotypes::extended: 
+//          std::cout << "extended" << std::endl;
+//          break;
+//      case hypotypes::shortened: 
+//          std::cout << "shortened" << std::endl;
+//          break;
+//      default:
+//          throw "this might not happen"; 
+//   }
+//   return out; 
+//}
     
 

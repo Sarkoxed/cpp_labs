@@ -28,6 +28,11 @@ namespace hypo{
                 std::cout << "(" << x._first << ", " << x._second << ") " << std::endl;
                 return out;
             }
+            friend std::ofstream& operator<<(std::ofstream &out, const pair<T,H> &x){
+                std::cout << "(" << x._first << ", " << x._second << ") " << std::endl;
+                return out;
+
+            }
 
 
         private: 
