@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cmath>
 
-#ifndef LIM_CYCLE
-#define LIM_CYCLE
+#pragma once
+const double pi = 3.14159265358979323846264338328;
+
 namespace curve{
     enum class hypotypes : short{normal, extended, shortened}; 
     
@@ -92,4 +93,3 @@ namespace curve{
 }
 
     std::ostream& operator<<(std::ostream &out, curve::hypotypes x);
-#endif 

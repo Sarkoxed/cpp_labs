@@ -39,7 +39,7 @@ TEST(curve, curve_point){
 
     EXPECT_DOUBLE_EQ(1.0, x);
     EXPECT_DOUBLE_EQ(0.0, y);
-    EXPECT_DOUBLE_EQ(sqrt(3)*3.0, b.get_point(M_PI / 3.0).y());
+    EXPECT_DOUBLE_EQ(sqrt(3)*3.0, b.get_point(pi / 3.0).y());
     ASSERT_ANY_THROW(hypocycloid(-1.0, 1.0, 1.0));
     ASSERT_ANY_THROW(hypocycloid(0, 2.0, 3.0));
     ASSERT_ANY_THROW(a.set_d(-1.0)); 
@@ -49,7 +49,7 @@ TEST(curve, curve_point){
     EXPECT_DOUBLE_EQ(2.0 , b.get_rs().x()); 
     EXPECT_DOUBLE_EQ(8.0,  c.get_rs().y());
 
-    EXPECT_DOUBLE_EQ(M_PI * 24, b.sectorial_area());
+    EXPECT_DOUBLE_EQ(pi * 24, b.sectorial_area());
 }
 
 

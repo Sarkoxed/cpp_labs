@@ -34,7 +34,11 @@ int main(){
     while(true){
         std::cout << "do ->";
         get_el(ch);
-        switch (ch){ case 1: std::cout << "small radius: "<< a.get_r() << std::endl; 
+        switch (ch){ 
+            case 0: 
+                help();
+                continue;
+            case 1: std::cout << "small radius: "<< a.get_r() << std::endl; 
                 continue;
             case 2: 
                 std::cout << "coef: "<< a.get_k() << std::endl; 
@@ -125,7 +129,7 @@ int main(){
                     std::ofstream ff;
                     ff.open(filename);
                     for(int i = 1; i < 1000; i++){
-                        pair<double, double> x = a.get_point(M_PI*i / 500.0 );
+                        pair<double, double> x = a.get_point(pi*i / 500.0 );
                         ff << "(" << x.x() << ", " << x.y() << ")\n";
                     }
                     ff.close();

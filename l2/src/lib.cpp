@@ -58,7 +58,7 @@ hypotypes hypocycloid:: get_type() const{
 }
 
 double hypocycloid:: sectorial_area() const {
-    return _r*(_k - 1) * ((_r*(_k - 1) - pow(_d, 2) / _r) * M_PI);
+    return _r*(_k - 1) * ((_r*(_k - 1) - pow(_d, 2) / _r) * pi);
 }
 
 double hypocycloid:: curvative_radius(double phi) const {
