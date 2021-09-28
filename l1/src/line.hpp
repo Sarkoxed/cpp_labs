@@ -17,7 +17,6 @@ class el{
             this->_ind = ind_t;
             this->_val = val;
         }
-
         el(const el<T> &cp){
             this->_ind = cp.ind();
             this->_val = cp.val();
