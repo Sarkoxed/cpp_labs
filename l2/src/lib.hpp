@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <stdexcept>
 
 #pragma once 
 
@@ -54,12 +55,12 @@ namespace curve{
 
             hypocycloid(double r, double k):_r(r), _k(k), _d(r){
                 if(r <= 0.0 || k <= 0.0){
-                    throw "no z-negative allowed";
+                    throw std::invalid_argument("no z-negative allowed");
                 }
             }
             hypocycloid(double r, double k, double d):_r(r), _k(k), _d(d){
                 if(r <= 0.0 || k <= 0.0 || d <= 0.0){
-                    throw "no z-negative allowed";
+                    throw std::invalid_argument("no z-negative allowed");
                 }
             }
 

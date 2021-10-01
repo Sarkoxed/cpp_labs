@@ -1,5 +1,7 @@
 #include "lib.hpp"
 #include "../../tools/toolib.hpp"
+#include <exception>
+#include <stdexcept>
 #include <string>
 #include <fstream>
 
@@ -52,8 +54,8 @@ int main(){
                 try{
                     a.set_r(r);
                 }
-                catch(const char* &e){
-                    std::cerr << e << std::endl;
+                catch(const std::exception &e){
+                    std::cerr << e.what() << std::endl;
                 }
                 continue;
             case 5: 
@@ -62,8 +64,8 @@ int main(){
                 try{
                     a.set_k(k);
                 }
-                catch(const char* &e){
-                    std::cerr << e << std::endl; }
+                catch(const std::exception &e){
+                    std::cerr << e.what() << std::endl; }
                 continue;
             case 6: 
                 std::cout << "input d: "; 
@@ -71,8 +73,8 @@ int main(){
                 try{
                     a.set_d(d);
                 }
-                catch(const char* &e){
-                    std::cerr << e << std::endl;
+                catch(const std::exception &e){
+                    std::cerr << e.what() << std::endl;
                 }
                 continue;           
             case 7: 
@@ -83,8 +85,8 @@ int main(){
                 try{
                     a = hypocycloid(r, k);
                 }
-                catch(const char* &e){
-                    std::cerr << e << std::endl;
+                catch(const std::exception &e){
+                    std::cerr << e.what() << std::endl;
                 }
                 continue;
             case 8:
@@ -97,8 +99,8 @@ int main(){
                 try{
                     a = hypocycloid(r, k, d);
                 }
-                catch(const char* &e){
-                    std::cerr << e << std::endl;
+                catch(const std::exception &e){
+                    std::cerr << e.what() << std::endl;
                 }
                 continue;               
             case 9:

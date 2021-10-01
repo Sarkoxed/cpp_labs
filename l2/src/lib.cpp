@@ -11,21 +11,21 @@ hypocycloid& hypocycloid:: operator=(const hypocycloid &x){
 
 void hypocycloid:: set_r(double r){ 
     if(r <= 0.0){
-        throw "no z-negative allowed";
+        throw std::invalid_argument("no z-negative allowed");
     }
     this->_r = r;
 }
 
 void hypocycloid:: set_k(double k){ 
     if(k <= 0.0){
-        throw "no z-negative allowed";
+        throw std::invalid_argument("no z-negative allowed");
     }
     this->_k = k;
 }
 
 void hypocycloid:: set_d(double d){ 
     if(d <= 0.0){
-        throw "no z-negative allowed";
+        throw std::invalid_argument("no z-negative allowed");
     }
     this->_d = d;
 }
