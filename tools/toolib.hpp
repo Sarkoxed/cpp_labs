@@ -6,7 +6,7 @@
 #define TOOL_LIB
 
 template <typename T>
-void get_el(T &x){
+void getEl(T &x){
     bool valid;
     do{
         try{
