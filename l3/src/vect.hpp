@@ -3,14 +3,16 @@
 
 #pragma once
 
-template <size_t N>
-class vec;
+void heapify(int arr[],  int n, int i);
+void heapsort(int z[], size_t n);
+
 
 namespace vector{
     template<size_t N>
     class vec{
         public:
             vec():a_arr{}, a_size(0){}; 
+
             explicit vec(const int &x){
                 this->a_arr[0] = x;
                 this->a_size = 1;
@@ -74,8 +76,8 @@ namespace vector{
                 }
                 int tmp = this->a_arr[0];
                 for(size_t i = 1; i < this->a_size; i++){
-                    if(tmp < this->arr[i]){
-                        tmp = this->arr[i];
+                    if(tmp < this->a_arr[i]){
+                        tmp = this->a_arr[i];
                     }
                 }
                 return tmp;
@@ -88,6 +90,3 @@ namespace vector{
             size_t a_total = N;
     };
 }
-
-void heapify(int arr[],  int n, int i);
-void heapsort(int z[], size_t n);
