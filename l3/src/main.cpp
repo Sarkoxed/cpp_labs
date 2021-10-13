@@ -19,7 +19,7 @@ int main(){
     int ad[10] = {2, -4,3 ,2,1 ,0, -2, -3, -7, 11};
     heeelp(12, x);
     while(true){
-        std::cout << "input a nu,ber: ";
+        std::cout << "input a number: ";
         getEl(c);
         switch (c){
             case 1:
