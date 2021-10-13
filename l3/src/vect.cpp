@@ -3,33 +3,33 @@
 using namespace vector;
 
 void heapify(int arr[], int n, int i){
-    int largest = i;
+    int lar = i;
     int l = 2*i+1;
     int r = 2*i+2;
 
-    if(l < n && arr[l] > arr[largest]){
-        largest = l;
+    if(l < n && arr[l] > arr[lar]){
+        lar = l;
     }
-    if(r < n && arr[r] > arr[largest]){
-        largest = r;
+    if(r < n && arr[r] > arr[lar]){
+        lar = r;
     }
-    if(largest != i){
+    if(lar != i){
         int tmp = arr[i];
-        arr[i]=arr[largest];
-        arr[largest] = tmp;
-        heapify(arr, n, largest);
+        arr[i] = arr[lar];
+        arr[lar] = tmp;
+        heapify(arr, n, lar);
     }
 }
 
 void heapsort(int z[],  size_t n){
-    for(size_t i = 0; i < n; i++){
-        heapify(z, n, i); 
+    for(size_t i = 0; i <= n / 2; i++){
+        heapify(z, n, n / 2 - i); 
     }
-    for(size_t i = n - 1; i >= 0; i--){
-        int tmp = z[0];
-        z[0] = z[i];
-        z[i] = tmp;
-        heapify(z, i, 0);
+    for(size_t i = 0; i < n; i++){
+        int tmp = z[0], k = n - i - 1;
+        z[0] = z[k];
+        z[k] = tmp;
+        heapify(z, k, 0);
     } 
 }
 
