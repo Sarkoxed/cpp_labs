@@ -4,7 +4,7 @@
 #include "../../tools/toolib.hpp"
 using namespace vector;
 
-const size_t size = 10;
+const int size = 10;
 
 void heeelp(int n,const std::string *x){
     for(int i = 0; i < n; i++){
@@ -26,7 +26,7 @@ int main(){
                 {
                     vec<size> o;
                     p = o;
-                    p.print();
+                    std::cout << p << std::endl;
                 }
                 break;
             case 2:
@@ -36,25 +36,25 @@ int main(){
                     getEl(z);
                     vec<size> o(z);
                     p = o;
-                    p.print(); 
+                    std::cout << p << std::endl;; 
                 }
                 break;
             case 3:
                 {
                     std::cout << "input 10 integers: " << std::endl;
                     int a[size / 2];
-                    for(size_t i = 0; i < size / 2; i++){
+                    for(int i = 0; i < size / 2; i++){
                         getEl(a[i]);
                     }
                     vec<size> o(size / 2, a);
                     p = o;
-                    p.print();
+                    std::cout << p << std::endl;;
                 }
                 break;
             case 4:
                 {
                     std::cout << "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIiiiiiiiiiiIIIIIiiiiiiIIIiiiiiIIiiiiiIIiiiiiIIIiiiiiIIIIIiiiiiiiiiIIIIIiiiiIIIiiiiiiiiiiIIIiiiiiiiiiiIIIiiiiiiiIIIiiiiiiiiiiiiiIIIIiiiiIIIiIIiIIIIiIIiiIIIIIIIiiiIIIIIiiiIIIIIiiiiIIIIiiIIIiiiiiIIIiiIIiiiiiiiiiiiiiiiIIIiiiiIIiiiIIIiiIIIiiiiiIIIiiiIIIIiIIIiiiiIIIIiiIIIIIiIIiiiiiIIIiiIIIIIiIIIiiiiIIIiiiIS" << std::endl;
-                    p.input(std::cin);
+                    std::cin >> p;
                 }
                 break;
             case 5:
@@ -67,13 +67,13 @@ int main(){
                 break;
 
             case 6:
-                p.print();
+                std::cout << p << std::endl;;
                 break;
             case 7:
                 {
                     std::cout  << "input a beginning index: ";
-                    size_t ind;
-                    size_t len;
+                    int ind;
+                    int len;
                     getEl(ind);
                     std::cout << "input a length: ";
                     getEl(len);
@@ -81,18 +81,19 @@ int main(){
                 }
                 break;
             case 8:
-                p.print();
+                std::cout << p << std::endl;;
                 std::cout << "+" << std::endl;
-                vec<10>(10, ad).print();
+                std::cout << vec<10>(10, ad) << std::endl;
                 std::cout << "=" << std::endl;
-                p.add(vec<10>(10, ad)).print();
+                p = p + vec<10>(10, ad);
+                std::cout << p << std::endl;
                 break;
             case 9:
                 std::cout << "begininningevebeberbjneor" << std::endl;
-                p.print();
+                std::cout << p << std::endl;;
                 std::cout << "sorted one: "<< std::endl;
                 p.sort();
-                p.print();
+                std::cout << p << std::endl;;
                 break;
             case 10:
                 std::cout << "maxelement : " << p.getmax() << std::endl;
