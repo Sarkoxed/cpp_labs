@@ -77,11 +77,16 @@ int main(){
                     getEl(ind);
                     std::cout << "input a length: ";
                     getEl(len);
-                    p = p.part(ind, len);
+                    p = p.slice(ind, len);
                 }
                 break;
             case 8:
+                p.print();
+                std::cout << "+" << std::endl;
+                vec<10>(10, ad).print();
+                std::cout << "=" << std::endl;
                 p.add(vec<10>(10, ad)).print();
+                break;
             case 9:
                 std::cout << "begininningevebeberbjneor" << std::endl;
                 p.print();

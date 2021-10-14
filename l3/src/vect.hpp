@@ -26,9 +26,9 @@ namespace vector{
             }
             
             void input(std::istream &in){
-                for(size_t i = 0; i < N; i++){
+                this->a_size = this->a_total;
+                for(size_t i = 0; i < this->a_size; i++){
                     in >> this->a_arr[i];
-                    this->a_size++;
                 }
             }
             
@@ -49,12 +49,12 @@ namespace vector{
                 std::cout << std::endl;
             }
 
-            vec part(size_t ind, size_t len){
-                if(ind + len > this->a_size){
+            vec slice(size_t ind, size_t len){
+                if(ind + len > this->a_size){ // it works with negative integers, i still have no idea. Unless using int 
                     throw std::out_of_range("too much");
                 }
                 else{
-                    return vec(ind + len, this->a_arr + ind);
+                    return vec(len, this->a_arr + ind);
                 }
             }
 
