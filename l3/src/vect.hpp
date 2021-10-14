@@ -4,11 +4,10 @@
 #pragma once
 
 void heapify(int arr[],  int n, int i);
-void heapsort(int z[], size_t n);
-
+void heapsort(int z[], int n);
 
 namespace vector{
-    template<size_t N>
+    template<int N> // I don't know how to escape negative values
     class vec{
         public:
             vec():a_arr{}, a_size(0){}; 
@@ -18,18 +17,11 @@ namespace vector{
                 this->a_size = 1;
             }
             
-            vec(const size_t &n,const int *arr){
-                for(size_t i = 0; i < N && i < n; i++){
+            explicit vec(const int &n,const int *arr){
+                for(int i = 0; i < N && i < n; i++){
                     this->a_arr[i] = arr[i];
                 }
                 this->a_size = (n > N) ? N : n;
-            }
-            
-            void input(std::istream &in){
-                this->a_size = this->a_total;
-                for(size_t i = 0; i < this->a_size; i++){
-                    in >> this->a_arr[i];
-                }
             }
             
             void append(const int &x){
@@ -42,28 +34,43 @@ namespace vector{
                 }
             }
 
-            void print(){
-                for(size_t i = 0; i < this->a_size; i++){
-                    std::cout << this->a_arr[i] << " ";
+            friend std::istream &operator>>(std::istream &in, vec &y){
+                y.a_size = y.a_total;
+                for(int i = 0; i < y.a_size; i++){
+                    in >> y.a_arr[i];
                 }
-                std::cout << std::endl;
+                return in;
+            }
+            
+            int operator[](int ind) const{
+                 if(ind < 0 || ind > this->a_size){
+                     throw std::out_of_range("out of range");
+                 }
+                 return this->a_arr[ind];
             }
 
-            vec slice(size_t ind, size_t len){
-                if(ind + len > this->a_size){ // it works with negative integers, i still have no idea. Unless using int 
-                    throw std::out_of_range("too much");
+            friend std::ostream &operator<<(std::ostream &out, const vec &y){
+                for(int i = 0; i < y.a_size; i++){
+                    out << y[i] << " ";
+                }
+                return out;
+            }
+
+            vec operator+(const vec &y){
+                vec tmp;
+                for(int i = 0; i < this->a_size && y.a_size;i++){
+                   tmp.append(this->a_arr[i] + y.a_arr[i]); 
+                }
+                return tmp;
+            }
+
+            vec slice(int ind, int len){
+                if(ind + len > this->a_size || ind < 0 || len < 0 || ind > this->a_size || len  > this->a_size){  
+                    throw std::out_of_range("Quiet, buddy");
                 }
                 else{
                     return vec(len, this->a_arr + ind);
                 }
-            }
-
-            vec add(const vec &y){
-                vec tmp;
-                for(size_t i = 0; i < this->a_size && y.a_size;i++){
-                   tmp.append(this->a_arr[i] + y.a_arr[i]); 
-                }
-                return tmp;
             }
 
             void sort(){
@@ -75,7 +82,7 @@ namespace vector{
                     throw std::invalid_argument("empty");
                 }
                 int tmp = this->a_arr[0];
-                for(size_t i = 1; i < this->a_size; i++){
+                for(int i = 1; i < this->a_size; i++){
                     if(tmp < this->a_arr[i]){
                         tmp = this->a_arr[i];
                     }
@@ -86,7 +93,7 @@ namespace vector{
             
         private:
             int a_arr[N];
-            size_t a_size;
-            size_t a_total = N;
+            int a_size;
+            int a_total = N;
     };
 }

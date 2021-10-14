@@ -21,11 +21,11 @@ void heapify(int arr[], int n, int i){
     }
 }
 
-void heapsort(int z[],  size_t n){
-    for(size_t i = 0; i <= n / 2; i++){
+void heapsort(int z[],  int n){
+    for(int i = 0; i <= n / 2; i++){
         heapify(z, n, n / 2 - i); 
     }
-    for(size_t i = 0; i < n; i++){
+    for(int i = 0; i < n; i++){
         int tmp = z[0], k = n - i - 1;
         z[0] = z[k];
         z[k] = tmp;
