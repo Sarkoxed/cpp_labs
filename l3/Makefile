@@ -16,8 +16,6 @@ DEBUGFLAGS = -g
 DEBUGFLAGS += -ggdb
 
 ASANFLAGS = -fsanitize=address
-#ASANFLAGS += -fno-common
-#ASANFLAGS += -fno-omit-frame-pointer
 AFLFLAGS = -Ofast
 
 
@@ -29,13 +27,6 @@ build: src/*.cpp src/*.hpp
 	@echo Building
 	@$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) src/*.cpp -o task.out $(LIBS)
 	
-.PHONY: better
-better: src1/*.cpp src1/*.hpp
-	@echo Building
-	@#$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) src/*.cpp -o task.out $(LIBS)
-	clang++ -g -ggdb -W -Wall -Wextra  src1/*.cpp -o task.out -lm
-
-
 .PHONY: sanitize
 sanitize: src/*.cpp src/*.hpp
 	@echo Running ASAN
@@ -50,14 +41,13 @@ clean:
 	-@rm *.out 2>/dev/null || true
 	-@rm *.o 2>/dev/null || true
 	-@rm *.so 2>/dev/null || true
-	-@rm curve 2>/dev/null || true
+	-@rm vector 2>/dev/null || true
 
-.PHONY obj: curve
+.PHONY obj: vect 
 
-liba.o: src/lib.*
-	clang++ -c -Wall -Werror -fpic src/lib.cpp -o liba.o
-liba.so: liba.o src/lib.hpp
+liba.o: src/vect.*
+	clang++ -c -Wall -Werror -fpic src/vect.cpp -o liba.o
+liba.so: liba.o src/vect.hpp
 	clang++ -shared -o liba.so liba.o
-
-curve: src/main.cpp liba.so src/lib.hpp
-	clang++ -L. -Wl,-rpath=. -Wall -Wextra -Werror -o curve src/main.cpp -la
+vect: src/main.cpp liba.so src/vect.hpp
+	clang++ -L. -Wl,-rpath=. -Wall -Wextra -Werror -o vector src/main.cpp -la
