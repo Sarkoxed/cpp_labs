@@ -111,16 +111,17 @@ namespace vector{
 
     template<int N>
     int vec<N>::getmax() const { // check the algo____________________________________________-
-        if(this->a_size == 0){
-            throw std::invalid_argument("empty");
-        }
-        int tmp = this->a_arr[0];
-        for(int i = 1; i < this->a_size; i++){
-            if(tmp < this->a_arr[i]){
-                tmp = this->a_arr[i];
-            }
-        }
-        return tmp;
+    //    if(this->a_size == 0){
+    //        throw std::invalid_argument("empty");
+    //    }
+    //    int tmp = this->a_arr[0];
+    //    for(int i = 1; i < this->a_size; i++){
+    //        if(tmp < this->a_arr[i]){
+    //            tmp = this->a_arr[i];
+    //        }
+    //    }
+    //    return tmp;
+          return *std::max_element(this->a_arr, this->a_arr + this->a_size);
     }
 
 }
