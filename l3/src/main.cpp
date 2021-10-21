@@ -53,7 +53,7 @@ int main(){
                 break;
             case 4:
                 {
-                    std::cout << "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIiiiiiiiiiiIIIIIiiiiiiIIIiiiiiIIiiiiiIIiiiiiIIIiiiiiIIIIIiiiiiiiiiIIIIIiiiiIIIiiiiiiiiiiIIIiiiiiiiiiiIIIiiiiiiiIIIiiiiiiiiiiiiiIIIIiiiiIIIiIIiIIIIiIIiiIIIIIIIiiiIIIIIiiiIIIIIiiiiIIIIiiIIIiiiiiIIIiiIIiiiiiiiiiiiiiiiIIIiiiiIIiiiIIIiiIIIiiiiiIIIiiiIIIIiIIIiiiiIIIIiiIIIIIiIIiiiiiIIIiiIIIIIiIIIiiiiIIIiiiIS" << std::endl;
+                    std::cout << "insert a line of numbers";
                     std::cin >> p;
                 }
                 break;
@@ -89,7 +89,7 @@ int main(){
                 std::cout << p << std::endl;
                 break;
             case 9:
-                std::cout << "begininningevebeberbjneor" << std::endl;
+                std::cout << "beginin with" << std::endl;
                 std::cout << p << std::endl;;
                 std::cout << "sorted one: "<< std::endl;
                 p.sort();
@@ -100,6 +100,9 @@ int main(){
                 break;
             case 11:
                 heeelp(12, x);
+                break;
+            case 13:
+                std::cout << bool(p) << std::endl;
                 break;
             case 12:
                 exit(1);
