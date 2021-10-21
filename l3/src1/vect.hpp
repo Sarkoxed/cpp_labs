@@ -4,36 +4,42 @@
 #pragma once
 
 void heapify(int arr[],  int n, int i);
-void heapsort(int z[], size_t n);
+void heapsort(int z[], int n);
 
 
 namespace vector{
-    template<size_t N>
+    template<int N>
     class vec{
-        public:
+       private:
+            int a_arr[N];
+            int a_size;
+       public:
             vec():a_arr{}, a_size(0){}; 
 
-            explicit vec(const int &x){
+            explicit vec( int x){
+                if(N < 1){
+                    throw std::out_of_range("no more place");
+                }
                 this->a_arr[0] = x;
                 this->a_size = 1;
             }
             
-            vec(const size_t &n,const int *arr){
-                for(size_t i = 0; i < N && i < n; i++){
+            vec(const int &n,const int *arr){
+                for(int i = 0; i < N && i < n; i++){
                     this->a_arr[i] = arr[i];
                 }
                 this->a_size = (n > N) ? N : n;
             }
             
             void input(std::istream &in){
-                this->a_size = this->a_total;
-                for(size_t i = 0; i < this->a_size; i++){
+                this->a_size = N;
+                for(int i = 0; i < this->a_size; i++){
                     in >> this->a_arr[i];
                 }
             }
             
             void append(const int &x){
-                if(this->a_size == this->a_total){
+                if(this->a_size == N){
                     throw std::out_of_range("no more space");
                 }
                 else{
@@ -43,14 +49,14 @@ namespace vector{
             }
 
             void print(){
-                for(size_t i = 0; i < this->a_size; i++){
+                for(int i = 0; i < this->a_size; i++){
                     std::cout << this->a_arr[i] << " ";
                 }
                 std::cout << std::endl;
             }
 
-            vec slice(size_t ind, size_t len){
-                if(ind + len > this->a_size){ // it works with negative integers, i still have no idea. Unless using int 
+            vec slice(int ind, int len){
+                if(ind + len > this->a_size){  
                     throw std::out_of_range("too much");
                 }
                 else{
@@ -60,7 +66,7 @@ namespace vector{
 
             vec add(const vec &y){
                 vec tmp;
-                for(size_t i = 0; i < this->a_size && y.a_size;i++){
+                for(int i = 0; i < this->a_size && y.a_size;i++){
                    tmp.append(this->a_arr[i] + y.a_arr[i]); 
                 }
                 return tmp;
@@ -75,7 +81,7 @@ namespace vector{
                     throw std::invalid_argument("empty");
                 }
                 int tmp = this->a_arr[0];
-                for(size_t i = 1; i < this->a_size; i++){
+                for(int i = 1; i < this->a_size; i++){
                     if(tmp < this->a_arr[i]){
                         tmp = this->a_arr[i];
                     }
@@ -83,10 +89,15 @@ namespace vector{
                 return tmp;
             }
 
+            bool equal(vec x){
+                for(int i = 0; i < this->a_size; i++){
+                    if(this->a_arr[i] != x.a_arr[i]){
+                        return false;
+                    }
+                }
+                return true;
+            }
+
             
-        private:
-            int a_arr[N];
-            size_t a_size;
-            size_t a_total = N;
     };
 }
