@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 
 #pragma once
 
@@ -106,7 +107,10 @@ namespace vector{
 
     template<int N>
     void vec<N>::sort(){
-       heapsort(this->a_arr, this->a_size); 
+       //heapsort(this->a_arr, this->a_size); 
+        std::make_heap(this->a_arr, this->a_arr + this->a_size);
+
+        std::sort_heap(this->a_arr, this->a_arr + this->a_size);
     }
 
     template<int N>

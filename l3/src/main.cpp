@@ -53,7 +53,7 @@ int main(){
                 break;
             case 4:
                 {
-                    std::cout << "insert a line of numbers";
+                std::cout << "insert a line of "<< size << " numbers: ";
                     std::cin >> p;
                 }
                 break;
