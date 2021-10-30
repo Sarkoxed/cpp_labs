@@ -128,6 +128,9 @@ namespace vector{
     
     
     bool vec::operator==(const vec &y) noexcept{
+        if(this == &y){
+            return true;
+        }
         if(this->a_size != y.size()){
             return false;
         }

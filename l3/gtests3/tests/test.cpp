@@ -31,6 +31,7 @@ TEST(vector, constructors){
     vec z(n, b);
     ASSERT_TRUE(z[n / 2] == b[n / 2]);
     ASSERT_TRUE(z[n / 3] == b[n / 3]);
+    ASSERT_TRUE(z == z);
 }
 
 TEST(vector, copymove){
@@ -68,17 +69,22 @@ TEST(vector, overloaded){
 }
 
 TEST(vector, adding){
-    int a[n],b[n],c[n];
+    int a[n],b[n],c[n],d[n];
     for(int i = 0; i < n; i++){
         a[i] = randint(-100, 100);
         b[i] = randint(-100, 100);
         c[i] = a[i] + b[i];
+        d[i] = 2*c[i];
     }
     vec r(n, a), v(n, b);
     vec z = r + v; 
     ASSERT_TRUE(z == vec(n, c));
     r += v;
     ASSERT_TRUE(r == vec(n, c));
+    z = r + r;
+    r += r;
+    ASSERT_TRUE(r == vec(n, d));
+    ASSERT_TRUE(z == vec(n, d));
 }
 
 TEST(vector, append){

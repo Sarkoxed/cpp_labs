@@ -1,5 +1,5 @@
-CXX = clang++
-
+#CXX = clang++
+CXX = g++
 #OPT = -O3
 
 LIBS = -lm
@@ -69,8 +69,11 @@ test.o: $(TEST_DIR)/test.cpp $(GTEST_HEADERS)
 	$(CXX) $(CXXFLAGS) -I $(GTEST_INCLUDE2) $(DEBUGFLAGS) -c $(TEST_DIR)/test.cpp $(ASANFLAGS) -o tests/test.o
 
 
-.PHONY: clean
+.PHONY: coverage
+coverage: tesrc/lib.cpp tests/test.cpp
+	$(CXX) -fprofile-arcs -ftest-coverage tesrc/lib.cpp tests/test.cpp
 
+.PHONY: clean
 clean:
 	rm tests/*.o
 	rm tests/*.a
