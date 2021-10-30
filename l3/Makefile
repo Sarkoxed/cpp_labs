@@ -8,7 +8,7 @@ CPPFLAGS = -Wall
 #CFLAGS += -Wfloat-equal
 CPPFLAGS += -Wextra
 CPPFLAGS += -pedantic
-#CPPFLAGS += -Werror
+CPPFLAGS += -Werror
 #CPPFLAGS += -Wmissing-declarations
 #CPPFLAGS += -fstack-protector-all
 
