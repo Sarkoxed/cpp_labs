@@ -1,7 +1,7 @@
 #include <iostream>
 #include "vect.hpp"
 #include <string>
-#include "../../tools/toolib.hpp"
+#include "../tools/toolib.hpp"
 using namespace vector;
 
 void heeelp(int n,const std::string *x){
