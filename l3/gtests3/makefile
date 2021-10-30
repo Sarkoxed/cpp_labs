@@ -4,10 +4,10 @@ CXX = clang++
 
 LIBS = -lm
 
-CXXFLAGS = -Wall
+#CXXFLAGS = -Wall
 #CFLAGS += -Wfloat-equal
-CXXFLAGS += -Wextra
-CXXFLAGS += -pedantic
+#CXXFLAGS += -Wextra
+#CXXFLAGS += -pedantic
 #CXXFLAGS += -Werror
 #CXXFLAGS += -Wmissing-declarations
 #CXXFLAGS += -fstack-protector-all
@@ -31,21 +31,22 @@ TEST_DIR=./tests
 
 GTEST_INCLUDE2=../googletest/googletest/include/gtest
 
-
-tests/test.o: test.o
-
-test.o: $(TEST_DIR)/test.cpp $(GTEST_HEADERS)
-	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c $(TEST_DIR)/test.cpp $(ASANFLAGS) -o tests/test.o
-test.out: tests/test.o tests/gtest_main.a
-	$(CXX) $(CXXFLAGS) $(ASANFLAGS) $(DEBUGFLAGS) -lpthread $^ tesrc/lib.cpp -o $@
-test: test.out
-	@./test.out
-
-
 # GTest facility
 # Taken from https://gist.github.com/mihaitodor/bfb8e7ad908489fdf3ceb496573f306a
 #
-.PHONY: tests/gtest-all.o tests/gtest_main.o tests/gtest_main.a tests/test.o
+#.PHONY: tests/gtest-all.o tests/gtest_main.o tests/gtest_main.a tests/test.o
+
+.PHONY: test
+test: test.out
+	@./test.out
+	@echo "============================================================================"
+
+#tests/test.o: test.o
+#test.o: $(TEST_DIR)/test.cpp $(GTEST_HEADERS)
+#	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c $(TEST_DIR)/test.cpp $(ASANFLAGS) -o tests/test.o
+test.out: tests/test.o tests/gtest_main.a
+	$(CXX) $(CXXFLAGS) $(ASANFLAGS) $(DEBUGFLAGS) -lpthread $^ tesrc/lib.cpp -o $@
+
 tests/gtest-all.o: gtest-all.o
 gtest-all.o: $(GTEST_SRCS_)
 	$(CXX) -I $(GTEST_DIR) -I $(GTEST_INCLUDE) $(DEBUGFLAGS) $(CXXFLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o tests/$@
@@ -54,6 +55,7 @@ tests/gtest_main.o: gtest_main.o
 gtest_main.o: $(GTEST_SRCS_)
 	$(CXX) -I $(GTEST_DIR) $(CXXFLAGS) $(DEBUGFLAGS) -c $(GTEST_DIR)/src/gtest_main.cc -o tests/$@
 
+tests/gtest.a: gtest.a
 gtest.a: tests/gtest-all.o
 	$(AR) $(ARFLAGS) $@ $^
 
@@ -66,7 +68,10 @@ tests/test.o: test.o
 test.o: $(TEST_DIR)/test.cpp $(GTEST_HEADERS)
 	$(CXX) $(CXXFLAGS) -I $(GTEST_INCLUDE2) $(DEBUGFLAGS) -c $(TEST_DIR)/test.cpp $(ASANFLAGS) -o tests/test.o
 
-test: test.out
-	@./test.out
-	@echo "============================================================================"
 
+.PHONY: clean
+
+clean:
+	rm tests/*.o
+	rm tests/*.a
+	rm *.out
