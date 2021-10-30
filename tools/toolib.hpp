@@ -2,44 +2,39 @@
 #include <vector>
 #include <limits>
 
-#ifndef TOOL_LIB
-#define TOOL_LIB
+#pragma once 
 
 template <typename T>
-void getEl(T &x){
+void getEl(T &x, std::istream &in = std::cin, std::ostream &out = std::cout, std::ostream &err= std::cerr){
     bool valid;
     do{
         try{
             valid = true;
-            std::cin >> x;
-            if(std::cin.fail()){
+            in >> x;
+            if(in.fail()){
                 throw "bad input";
             }
         }
         catch(const char * &e){
-            std::cerr << e;
-            if(std::cin.bad() || std::cin.eof()){
-                std::cerr << ", bye" << std::endl;
+            err << e;
+            if(in.bad() || in.eof()){
+                err << ", bye" << std::endl;
                 exit(0);
             }
             valid = false;
-            std::cerr << ", retry" << std::endl; 
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            err << ", retry" << std::endl; 
+            in.clear();
+            in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }while(!valid);
 }
 
-
-
 template <typename T>
 std::ostream&operator<<(std::ostream& out,const std::vector<T> &x){
     for(auto i: x){
-        std::cout << i << " ";
+        out << i << " ";
     }
-    std::cout << std::endl;
+    out << std::endl;
     return out;
 }
 
-
-#endif
