@@ -1,5 +1,5 @@
 CXX = clang++
-
+#CXX = g++
 #OPT = -O3
 
 LIBS = -lm
@@ -18,6 +18,8 @@ DEBUGFLAGS += -ggdb
 ASANFLAGS = -fsanitize=address
 AFLFLAGS = -Ofast
 
+COVFLAGS = -fprofile-arcs
+COVFLAGS += -ftest-coverage
 
 .PHONY: default
 default: build
@@ -26,6 +28,10 @@ default: build
 build: src/*.cpp src/*.hpp
 	@echo Building
 	@$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) src/*.cpp -o task.out $(LIBS)
+
+.PHONY: coverage
+coverage: src/*.cpp src/*.hpp tools/*.hpp
+	@$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(COVFLAGS) src/*.cpp -o task.out $(LIBS)
 	
 .PHONY: sanitize
 sanitize: src/*.cpp src/*.hpp
