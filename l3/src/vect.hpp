@@ -17,13 +17,8 @@ namespace vector{
             void resize(const int n);
 
         public:
-            explicit vec(int size = 0):p_arr(new int [this->ext]), a_size(0), a_total(this->ext){ // default constructor
-                if(size < 0){
-                    throw std::invalid_argument("negative size");
-                }
-            }                                             
+            explicit vec(const int size = 0,const int el = 0);// default, like a vector in stl
             explicit vec(const int size,const int *arr);      // from the array
-            explicit vec(const int size,const int el);        // like a vector in stl
             vec(const vec &y);                                // copy constructor
             vec(vec &&y);                                     // move constructor
             ~vec();                                           // de....(wait a second..)....structor!!!

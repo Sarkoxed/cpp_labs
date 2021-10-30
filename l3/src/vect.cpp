@@ -2,13 +2,10 @@
 
 namespace vector{
     // ---------------------- constructors 
-    vec::vec(const int size, const int el){
+    vec::vec(const int size, const int el):a_size(size), a_total(size + this->ext){
         if(size < 0){
             throw std::invalid_argument("negative size");
         }
-    
-        this->a_total = size + this->ext;
-        this->a_size = size;
         this->p_arr = new int [size + this->ext];
         for(int i = 0; i < size; i++){
            this->p_arr[i] = el; 
@@ -36,12 +33,10 @@ namespace vector{
     }
     
     
-    vec::vec(vec &&other){
+    vec::vec(vec &&other):p_arr(nullptr){
         this->a_size = other.a_size;
         this->a_total = other.a_total;
-        this->p_arr = std::move(other.p_arr);
-        other.a_size = 0;
-        other.a_total = 0;
+        std::swap(other.p_arr, this->p_arr);
     }
     
 
