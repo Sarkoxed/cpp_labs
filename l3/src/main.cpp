@@ -37,7 +37,7 @@ int main(){
                     getEl(z);
                     vec o(n, z);
                     p = o;
-                    std::cout << p << std::endl;; 
+                    std::cout << p << std::endl;;
                 }
                 break;
             case 3:
@@ -124,5 +124,3 @@ int main(){
         }
     }
 }
-        
-

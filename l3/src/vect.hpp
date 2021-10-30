@@ -1,4 +1,3 @@
-#include <iostream>
 #include <stdexcept>
 #include <algorithm>
 
@@ -12,7 +11,7 @@ namespace vector{
             int *p_arr;
             int a_size;
             int a_total;
-            static const short ext = 5;  // extra space in realloc
+            static const short ext = 5;  // extra space during reallocation
 
             void resize(const int n);
 

@@ -55,7 +55,7 @@ namespace vector{
     }
     
 
-    int & vec::operator[](int ind){
+    int& vec::operator[](int ind){
         if(ind < 0 || ind >= this->a_size){
             throw std::out_of_range("out of range");
         }
@@ -95,7 +95,7 @@ namespace vector{
     }
     
 
-    vec& vec::operator=(const vec& right){
+    vec& vec::operator=(const vec &right){
         if(this != &right){
             delete [] this->p_arr;
             this->a_size = right.size();
@@ -122,6 +122,9 @@ namespace vector{
     
     
     bool vec::operator==(const vec &y) noexcept{
+        if(this == &y){
+            return true;
+        }
         if(this->a_size != y.size()){
             return false;
         }
@@ -154,7 +157,7 @@ namespace vector{
         return out;
     } 
 
-    //----------------- this->extra methods
+    //----------------- extra methods
     void vec::append(const int x){
         if(this->a_total == this->a_size){
             this->resize(this->a_size);    
@@ -180,11 +183,11 @@ namespace vector{
     
 
     vec vec::slice(int ind, int len){
-        if(ind + len > this->a_size || ind > this->a_size || len  > this->a_size){  
-            throw std::out_of_range("Quiet, buddy");
+        if(ind < 0 || len < 0){
+            throw std::invalid_argument("negative values are not allowed");
         }
-        else if(ind < 0 || len < 0){
-            throw std::invalid_argument("negative values not allowed");
+        else if(ind + len > this->a_size || ind >= this->a_size || len  > this->a_size){  
+            throw std::out_of_range("Quiet, buddy");
         }
     
         return vec(len, this->p_arr + ind);
