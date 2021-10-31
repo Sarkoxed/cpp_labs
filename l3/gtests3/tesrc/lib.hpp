@@ -28,18 +28,18 @@ namespace vector{
 
             vec& operator+=(const vec &y);
 
-            bool operator==(const vec &y) noexcept;
-            bool operator!=(const vec &y) noexcept;
+            bool operator==(const vec &y) const noexcept;
+            bool operator!=(const vec &y) const noexcept;
             
             vec& operator=(const vec &y);                     // copy assignment
             vec& operator=(vec &&y);                          // move assignment
 
-            vec operator+(const vec &y);                      // adding two vectors                    
+            vec operator+(const vec &y) const;                       // adding two vectors                    
 
             explicit operator bool() const{ return !(this->a_size == 0);}
 
             void append(int el);
-            vec slice(int ind, int len);
+            vec slice(int ind, int len) const;
 
             void sort();
             int getmax() const;

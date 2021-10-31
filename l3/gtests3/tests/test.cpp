@@ -85,6 +85,7 @@ TEST(vector, adding){
     r += r;
     ASSERT_TRUE(r == vec(n, d));
     ASSERT_TRUE(z == vec(n, d));
+    const vec k(r);
 }
 
 TEST(vector, append){
