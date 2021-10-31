@@ -63,7 +63,7 @@ namespace vector{
     }
 
 
-    vec vec::operator+(const vec &y){ // i will improve it, i swear // done
+    vec vec::operator+(const vec &y) const{ // i will improve it, i swear // done
         vec tmp = (y.a_size > this->a_size) ? vec(y.a_size) : vec(this->a_size);
     
         for(int i = 0; i < this->a_size && i < y.a_size; i++){
@@ -121,7 +121,7 @@ namespace vector{
     }
     
     
-    bool vec::operator==(const vec &y) noexcept{
+    bool vec::operator==(const vec &y) const noexcept{
         if(this == &y){
             return true;
         }
@@ -137,7 +137,7 @@ namespace vector{
     }
     
 
-    bool vec::operator!=(const vec &y) noexcept{
+    bool vec::operator!=(const vec &y) const noexcept{
         return !(*this == y);    
     }
      
@@ -182,11 +182,14 @@ namespace vector{
     }
     
 
-    vec vec::slice(int ind, int len){
-        if(ind < 0 || len < 0){
+    vec vec::slice(int ind, int len) const{
+        bool neg = (ind < 0 || len < 0);
+        bool over = (ind + len > this->a_size || ind >= this->a_size || len  > this->a_size); 
+
+        if(neg){
             throw std::invalid_argument("negative values are not allowed");
         }
-        else if(ind + len > this->a_size || ind >= this->a_size || len  > this->a_size){  
+        else if(over){  
             throw std::out_of_range("Quiet, buddy");
         }
     
