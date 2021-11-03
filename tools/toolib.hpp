@@ -5,7 +5,7 @@
 #pragma once 
 
 template <typename T>
-void getEl(T &x, std::istream &in = std::cin, std::ostream &out = std::cout, std::ostream &err= std::cerr){
+void getEl(T& x, std::istream& in = std::cin, std::ostream& err= std::cerr){
     bool valid;
     do{
         try{
