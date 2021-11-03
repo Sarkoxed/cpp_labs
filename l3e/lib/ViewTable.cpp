@@ -41,7 +41,7 @@ namespace Table{
 
 
     ViewedTable& ViewedTable::add(int key, const char *value) {
-        if (find(key)) throw std::runtime_error("Key duplicate in table");
+        //if (find(key)) throw std::runtime_error("Key duplicate in table");
 
         if (currentSize == capacity){
             garbageCollect(capacity + 1);
