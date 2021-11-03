@@ -23,7 +23,7 @@ COVFLAGS += -ftest-coverage
 
 SOURCE_DIR = src
 LIBRARY_DIR = lib
-PROJECT_NAME = project
+PROJECT_NAME = fighting
 LIBRARY_NAME = table
 
 .PHONY: default
