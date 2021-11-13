@@ -63,7 +63,7 @@ int main(){
                 getEl(n);
                 vec o(n);
                 std::cout << "insert a line of "<< n << " numbers: ";
-                    std::cin >> p;
+                    std::cin >> o;
                 }
                 break;
             case 5:
