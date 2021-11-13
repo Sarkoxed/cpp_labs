@@ -18,51 +18,50 @@ DEBUGFLAGS += -ggdb
 ASANFLAGS = -fsanitize=address
 AFLFLAGS = -Ofast
 
-COVFLAGS = -fprofile-arcs
-COVFLAGS += -ftest-coverage
+#COVFLAGS = -fprofile-arcs
+#COVFLAGS += -ftest-coverage
 
 SOURCE_DIR = src
-LIBRARY_DIR = lib
+LIB_DIR = lib
 PROJECT_NAME = fighting
-LIBRARY_NAME = table
+LIB_NAME = table
 
 .PHONY: default
 default: build
 
 .PHONY: build
-build: $(SOURCE_DIR)/* $(LIBRARY_DIR)/*
+build: $(SOURCE_DIR)/* $(LIB_DIR)/*
 	@echo Building
-	@$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) $(SOURCE_DIR)/*.cpp $(LIBRARY_DIR)/*.cpp -o build.out $(LIBS)
+	@$(CXX) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) $(SOURCE_DIR)/*.cpp $(LIB_DIR)/*.cpp -o build.out $(LIBS)
 	
 .PHONY: sanitize
-sanitize: $(SOURCE_DIR)/* $(LIBRARY_DIR)/*
+sanitize: $(SOURCE_DIR)/* $(LIB_DIR)/*
 	@echo Building
-	@$(CXX) $(ASANFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) $(SOURCE_DIR)/*.cpp $(LIBRARY_DIR)/*.cpp -o asan.out $(LIBS)
+	@$(CXX) $(ASANFLAGS) $(DEBUGFLAGS) $(CPPFLAGS) $(OPT) $(SOURCE_DIR)/*.cpp $(LIB_DIR)/*.cpp -o asan.out $(LIBS)
 	@echo "ASAN passed"
 
-asan.out: sanitize
 
 
+#########################################################################################################
 .PHONY: project
-project: lib$(LIBRARY_NAME).so $(SOURCE_DIR)/*.cpp
+project: lib$(LIB_NAME).so
 	@echo "Building project"
-	@$(CXX) -L. -Wl,-rpath=. $(CPPFLAGS) -o $(PROJECT_NAME) $(SOURCE_DIR)/*.cpp -l$(LIBRARY_NAME)
+	@$(CXX) -L. -Wl,-rpath=. $(CPPFLAGS) $(SOURCE_DIR)/*.cpp -l$(LIB_NAME) -o $(PROJECT_NAME).out 
 
-.PHONY: object
-object: lib$(LIBRARY_NAME).so
+lib$(LIB_NAME).so: lib$(LIB_NAME).o
+lib$(LIB_NAME).o: 
 
-lib$(LIBRARY_NAME).o: $(LIBRARY_DIR)/*.cpp
-	@$(CXX) -c -Wall -fpic $(LIBRARY_DIR)/*.cpp -o lib$(LIBRARY_NAME).o
+%.o: $(LIB_DIR)/*.cpp $(LIB_DIR)/*.hpp
+	@$(CXX) -c -Wall -fpic $< -o $@
 
-lib$(LIBRARY_NAME).so: lib$(LIBRARY_NAME).o $(LIBRARY_DIR)/*.cpp
-	@$(CXX) -shared -o lib$(LIBRARY_NAME).so lib$(LIBRARY_NAME).o
+%.so: %.o
+	@$(CXX) -shared $< -o $@
+
 
 
 .PHONY: clean
 clean:
-	@echo Deleting *.out *.o bin textfiles
+	@echo Deleting .o, .so, .out
 	-@rm *.out 2>/dev/null || true
 	-@rm *.o 2>/dev/null || true
 	-@rm *.so 2>/dev/null || true
-	-@rm $(PROJECT_NAME) 2>/dev/null || true
-
