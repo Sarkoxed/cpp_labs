@@ -68,7 +68,12 @@ std::string update(char* val, int no, int wo){
     std::string ans = s.substr(0, beg) + tf;
     ans += std::to_string(tot) + ", " + tw;
     ans += std::to_string(tow) + ", \'winrate\': ";
-    ans += std::to_string(static_cast<int>(static_cast<double>(tow) / tot * 100));
+    if(tot){
+        ans += std::to_string(static_cast<int>(static_cast<double>(tow) / tot * 100));
+    }
+    else{
+        ans += "0";
+    }
     ans += "%}";
     return ans;
 }
@@ -166,6 +171,16 @@ Table::ViewedTable genTable(const Table::ViewedTable &t, int count, std::ofstrea
 
 
 void fight(Table::ViewedTable &pla, int max, int no, std::ofstream &file){
+    if(pla.size() == 1){
+        int i = 1;
+        const Table::TableElement* win = getPlayer(pla, i, 1, max);
+        file << update(win->value, no, no);
+        std::cout << std::endl << std::endl << "ABSOLUTE WINNER: " << parsename(win) << ", Wins this tournament: " << no << std::endl;
+        pla.remove(win->key);
+        pla = !pla;
+        return;
+    }
+
     Table::ViewedTable winners;
     int j = 0, i = 1;
     int p = genCoPrime(max);
@@ -179,7 +194,6 @@ void fight(Table::ViewedTable &pla, int max, int no, std::ofstream &file){
         std::cout << " vs ";
         std::cout << "№" << el2->key << " " << parsename(el2) << std::endl;
 
-        int w, l;
         bool res = pairFight(el1, el2, no);
         if(!res){
             std::cout << "PLAYER № " << el1->key << " " << parsename(el1) << " WON!!!!" << std::endl;
@@ -193,19 +207,7 @@ void fight(Table::ViewedTable &pla, int max, int no, std::ofstream &file){
         }
         std::cout << "---------------------" << std::endl;
         
-        if(pla.size() == 2){
-            if(!res){
-                file << update(el1->value, no, no);
-                std::cout << std::endl << std::endl << "ABSOLUTE WINNER: " << parsename(el1) << ", Wins this tournament: " << no << std::endl;
-                pla.remove(el1->key);
             }
-            else{
-                file << update(el2->value, no, no);
-                std::cout << std::endl << std::endl << "ABSOLUTE WINNER: " << parsename(el2) << ", Wins this tournament: " << no << std::endl;
-                pla.remove(el2->key);
-            }
-        }
-    }
     if(pla.size() & 1){
         const Table::TableElement* el = getPlayer(pla, i, p, max);
         std::cout << "player № " << el->key << " " << parsename(el) << ". " << excuses() << std::endl;
@@ -213,5 +215,6 @@ void fight(Table::ViewedTable &pla, int max, int no, std::ofstream &file){
         pla.remove(el->key);
     }
     pla = !pla;
+
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
