@@ -47,15 +47,18 @@ sanitize: $(SOURCE_DIR)/* $(LIB_DIR)/*
 project: lib$(LIB_NAME).so
 	@echo "Building project"
 	@$(CXX) -L. -Wl,-rpath=. $(CPPFLAGS) $(SOURCE_DIR)/*.cpp -l$(LIB_NAME) -o $(PROJECT_NAME).out 
+#%.o: %.cpp %.hpp
+#	@$(CXX) -c -Wall -fpic $< -o $@
+#
+#%.so: %.o
+#	@$(CXX) -shared $< -o $@
+#
 
 lib$(LIB_NAME).so: lib$(LIB_NAME).o
-lib$(LIB_NAME).o: 
-
-%.o: $(LIB_DIR)/*.cpp $(LIB_DIR)/*.hpp
-	@$(CXX) -c -Wall -fpic $< -o $@
-
-%.so: %.o
 	@$(CXX) -shared $< -o $@
+
+lib$(LIB_NAME).o: $(LIB_DIR)/*.cpp $(LIB_DIR)/*.hpp
+	@$(CXX) -c -Wall -fpic $< -o $@
 
 
 
