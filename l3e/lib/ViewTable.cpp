@@ -10,7 +10,7 @@
 #include "ViewTable.hpp"
 
 namespace Table{
-    ViewedTable& ViewedTable::add(const TableElement *elementsArray, size_t count) {
+        ViewedTable& ViewedTable::add(const TableElement *elementsArray, size_t count) {
         if (currentSize + count > capacity){
             size_t busyCount = 0;
 
@@ -76,7 +76,7 @@ namespace Table{
         throw std::runtime_error("Element not found");
     }
 
-    const char *ViewedTable::getValue(int key) const{
+    char *ViewedTable::getValue(int key) const{
         const TableElement *el = find(key);
 
         if (el) return el->value;

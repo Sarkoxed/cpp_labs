@@ -1,6 +1,11 @@
-#include <iostream>
+//    This is a personal academic project. Dear PVS-Studio, please check it.
+//
+//    PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 #ifndef LAB3_VIEW_TABLE_H
 #define LAB3_VIEW_TABLE_H
+
+#include <iostream>
 
 namespace Table{
     struct TableElement{
@@ -8,19 +13,15 @@ namespace Table{
         int key;
 
         char *value;
-
-        TableElement():busy(false), key(0), value(nullptr){} //
-
         friend std::ostream& operator <<(std::ostream& cout, const TableElement &el);
     };
 
     class ViewedTable{
     private:
-        size_t currentSize;//
-        size_t capacity;   //+2
+
+        size_t currentSize;
+        size_t capacity;
         TableElement *elements;
-
-
     public:
         ViewedTable() :currentSize(0), capacity(0), elements(nullptr) {};
 
@@ -58,7 +59,7 @@ namespace Table{
 
         [[nodiscard]] const TableElement *find(int key) const;
         [[nodiscard]] const TableElement& getItem(int key) const;
-        [[nodiscard]] const char *getValue(int key) const;
+        [[nodiscard]] char *getValue(int key) const;
 
         void remove(int key);
         void garbageCollect(size_t freeSpaceCount = 0);
