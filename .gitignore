@@ -9,3 +9,5 @@ todo
 *Cmake*/
 *cmake*
 *.zip
+documentation/
+.ipynb_checkpoints/

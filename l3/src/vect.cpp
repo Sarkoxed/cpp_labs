@@ -120,7 +120,6 @@ namespace vector{
         return *this;
     }
     
-    
     bool vec::operator==(const vec &y) const noexcept{
         if(this == &y){
             return true;
