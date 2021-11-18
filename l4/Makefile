@@ -68,3 +68,4 @@ clean:
 	-@rm *.out 2>/dev/null || true
 	-@rm *.o 2>/dev/null || true
 	-@rm *.so 2>/dev/null || true
+	-@rm -rf html latex Untitled.ipynb
