@@ -13,21 +13,19 @@ class Character{
         unsigned int a_radius;
         unsigned int a_accuracy; // too
     public:
-        explicit Character(unsigned int health, unsigned int time, unsigned int step, unsigned int radius, unsigned int accuracy);
-
-        unsigned int getCurHealth() const { return a_curhealth; };
-        unsigned int getMaxHealth() const { return a_maxhealth; };
-        unsigned int getCurTime() const { return a_radius; };
-        unsigned int getMaxTime() const { return a_maxtime; };
-        unsigned int getStepTime() const { return a_steptime; };
-        unsigned int getRadius() const { return a_radius;};
-        unsigned int getAccuracy() const { return a_accuracy;};
+        virtual unsigned int getCurHealth() const { return a_curhealth; };
+        virtual unsigned int getMaxHealth() const { return a_maxhealth; };
+        virtual unsigned int getCurTime() const { return a_radius; };
+        virtual unsigned int getMaxTime() const { return a_maxtime; };
+        virtual unsigned int getStepTime() const { return a_steptime; };
+        virtual unsigned int getRadius() const { return a_radius;};
+        virtual unsigned int getAccuracy() const { return a_accuracy;};
         
-        void changeHealth(unsigned int health);
-        void recieveDamage(unsigned int dam);
-        void changeCurTime(unsigned int time);
-        void resetTime();
-        void setStepTime();        
+        virtual void changeHealth(unsigned int health);
+        virtual void recieveDamage(unsigned int dam);
+        virtual void changeCurTime(unsigned int time);
+        virtual void resetTime();
+        virtual void setStepTime();        
 };
 
 
