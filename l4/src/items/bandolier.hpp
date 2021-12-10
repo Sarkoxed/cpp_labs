@@ -2,7 +2,7 @@
 
 #include "item.hpp"
 
-class Bandolier: Item{
+class Bandolier:public Item{
     private:
         WeaponType a_bullets;
         unsigned int a_maxsize;
@@ -30,9 +30,7 @@ class Bandolier: Item{
         void operator-=(unsigned int);
         void operator+=(Bandolier& right);
         void operator+=(const unsigned int);
-        void operator--();
-        void operator++();
-        
+       
         WeaponType getType() const { return a_bullets; };
         void setType(WeaponType type, unsigned int amo = 0);
 

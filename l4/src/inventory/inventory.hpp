@@ -3,13 +3,25 @@
 
 #include <map>
 
-#include "weapon.hpp"
-#include "medkit.hpp"
-#include "bandolier.hpp"
+#include "../items/item.hpp"
+#include "../items/weapon.hpp"
+#include "../items/medkit.hpp"
+#include "../items/bandolier.hpp"
 
 class Inventory{
     private:
         unsigned int a_curweight;
-        std::map<int, Item*> a_table;
-    
+        unsigned int a_maxweight;
+        unsigned int a_itcount;
+        std::map<unsigned int, Item*> a_table;
+    public:
+        Inventory(unsigned int size = 0, unsigned int max = 0, unsigned int el = 0):a_curweight(size),a_maxweight(max), a_itcount(el){}
+        const unsigned int getCurWeight()const { return a_curweight; }
+
+        const unsigned int getMaxWeight()const{return a_maxweight;}
+        const unsigned int getCurCount()const{return a_itcount;}
+        void add(unsigned int inv, Item* it);
+        Item* extract(unsigned int inv);
+
+        Item* operator[](unsigned int inv);
 };

@@ -2,7 +2,7 @@
 
 #include "item.hpp"
 
-class MedKit: Item{
+class MedKit: public Item{
     private:
         unsigned int a_inchealth;
         unsigned int a_healthtime;
