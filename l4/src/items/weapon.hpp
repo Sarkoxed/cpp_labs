@@ -36,4 +36,4 @@ class Weapon: public Item{
         const bool isAmmo() const{ return false; }
 };
 
-std::map<WeaponType, std::vector<unsigned int>> readconfig(std::string filename);
+static std::map<WeaponType, std::vector<unsigned int>> readconfig(std::string filename);

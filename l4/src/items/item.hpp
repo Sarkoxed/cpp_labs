@@ -32,5 +32,6 @@ class Item{
         virtual const bool isWeapon() const{ return false; }
         virtual const bool isMedkit() const{ return false; }
         virtual const bool isAmmo() const{ return false; }
+        virtual ~Item() = default;
 
 };
