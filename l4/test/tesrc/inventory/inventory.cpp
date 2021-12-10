@@ -35,3 +35,9 @@ Item* Inventory::operator[](unsigned int inv){
     }
     throw std::out_of_range("no such an element");
 }
+
+Inventory::~Inventory(){
+    for(auto i: a_table){
+        delete i.second;
+    }
+}
