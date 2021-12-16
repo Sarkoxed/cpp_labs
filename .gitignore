@@ -11,3 +11,4 @@ todo
 *.zip
 documentation/
 .ipynb_checkpoints/
+*.gch

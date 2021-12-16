@@ -1,12 +1,8 @@
 // sarkoxed //
 #include "beasts.hpp"
 
-unsigned int randint(unsigned int a){
-    return random() % a;
-}
 
-
-WildBeast::WildBeast(std::vector<std::vector<unsigned int>>& config){
+WildBeast::WildBeast(bconfig& config){
     srand(time(0));
     unsigned int num = randint(config[0].size());
     int j = 0;
@@ -21,7 +17,7 @@ WildBeast::WildBeast(std::vector<std::vector<unsigned int>>& config){
 }
 
 
-SmartBeast::SmartBeast(std::vector<std::vector<unsigned int>>& config){
+SmartBeast::SmartBeast(bconfig& config){
     srand(time(0));
     unsigned int num = randint(config[0].size());
     int j = 0;
@@ -36,7 +32,7 @@ SmartBeast::SmartBeast(std::vector<std::vector<unsigned int>>& config){
 }
 
 
-ForagerBeast::ForagerBeast(std::vector<std::vector<unsigned int>>& config){
+ForagerBeast::ForagerBeast(bconfig& config){
     srand(time(0));
     unsigned int num = randint(config[0].size());
     int j = 0;
@@ -47,7 +43,8 @@ ForagerBeast::ForagerBeast(std::vector<std::vector<unsigned int>>& config){
     a_steptime = config[j++][num];
     a_radius = config[j++][num];
     a_accuracy = config[j++][num];
-    a_strength = randint(400);
+    a_strength = 100 + randint(400);
+    a_inventory = Inventory(0, a_strength, 0);
 }
 
 
@@ -58,15 +55,15 @@ void SmartBeast::pickItem(Weapon* wep){
     a_hands = wep;
 }
 
-Item* SmartBeast::throwItem(){
+Weapon* SmartBeast::throwItem(){
     Weapon* tmp = a_hands;
     a_hands = nullptr;
     return tmp;
 }
 
 unsigned int SmartBeast::shoot(unsigned int dist){
+    a_hands->makeShot(a_curtime);
     if(a_hands->getShotResult(dist, a_accuracy, a_radius)){
-        a_hands->makeShot(a_curtime);
         return a_hands->getDamage();
     }
     return 0;
@@ -84,14 +81,14 @@ Item* ForagerBeast::throwItem(unsigned int num){
 
 }
 
-static std::vector<std::vector<unsigned int>> readconfig(const std::string& filename){
+bconfig readbea(const std::string& filename){
     std::ifstream fin;
     fin.open(filename);
     if(!fin.is_open()){
         throw std::invalid_argument("no such a file");
     }
     
-    std::vector<std::vector<unsigned int>> cha;
+    bconfig cha;
     int count;
     fin >> count;
     std::string name;

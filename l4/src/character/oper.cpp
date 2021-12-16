@@ -1,14 +1,10 @@
 // sarkoxed //
 #include "oper.hpp"
 
-unsigned int randint(unsigned int a){
-    return random() % a;
-}
 
-
-OpAgent::OpAgent(std::pair<std::vector<std::string>, std::vector<std::vector<unsigned int>>>& config){
+OpAgent::OpAgent(opconfig& config){
     srand(time(0));
-    unsigned int num = randint(config.second.size());
+    unsigned int num = randint(config.second[0].size()-1);
     int j = 0;
     a_name = config.first[num];
     a_strength = config.second[j++][num];
@@ -22,6 +18,8 @@ OpAgent::OpAgent(std::pair<std::vector<std::string>, std::vector<std::vector<uns
     a_reloadtime = 0;
     a_curweight = 0;
     a_hands = nullptr;
+
+    a_inventory = Inventory(0, a_strength, 0);
 }
 
 void OpAgent::setReload(unsigned int rel){
@@ -38,23 +36,42 @@ void OpAgent::chooseItemToHold(unsigned int num){
         a_inventory.add(num, a_hands);
         a_hands = w;
         a_reloadtime = w->getRelTime();
+        return;
     }
     throw std::invalid_argument("not a weapon");
 }
 
 void OpAgent::pickItem(Item* item, unsigned int num){
+    if(a_hands != nullptr){
+        if(a_hands->getWeight() + a_curweight + item->getWeight() > a_strength){
+            throw std::out_of_range("not enough stamina");
+        }
+    }
     a_inventory.add(num, item);
+    a_curweight += item->getWeight(); 
 }
 
 Item* OpAgent::throwItem(unsigned int num){
-    return a_inventory.extract(num);
+    Item* tmp = a_inventory.extract(num);
+    a_curweight -= tmp->getWeight();
+    return tmp;
+}
+
+Item* OpAgent::throwHand(){
+    if(a_hands == nullptr){
+        throw std::out_of_range("nothing to throw");
+    }
+    Item* tmp = a_hands;
+    a_hands = nullptr;
+    a_curweight -= tmp->getWeight();
+    return tmp;
 }
 
 
 void OpAgent::reload(Bandolier& ammo){
     unsigned int a = ammo.getCurSize();
     a_hands->reload(a, a_curtime);
-    ammo -= ammo.getCurSize() - a;
+    ammo -= (ammo.getCurSize() - a);
 }
 
 void OpAgent::heal(MedKit& med){
@@ -62,30 +79,31 @@ void OpAgent::heal(MedKit& med){
 }
 
 unsigned int OpAgent::shoot(unsigned int dist){
+    a_hands->makeShot(a_curtime);
     if(a_hands->getShotResult(dist, a_accuracy, a_radius)){
-        a_hands->makeShot(a_curtime);
         return a_hands->getDamage();
     }
     return 0;
 }
 
-static std::pair<std::vector<std::string>, std::vector<std::vector<unsigned int>>> readconfig(const std::string& filename){
+opconfig readchar(const std::string& filename){
     std::ifstream fin;
     fin.open(filename);
     if(!fin.is_open()){
         throw std::invalid_argument("no such a file");
     }
     
-    std::vector<std::string> names(5);
     std::vector<std::vector<unsigned int>> cha;
     int count;
     fin >> count;
+    
+    std::vector<std::string> names;
     std::string name;
-    fin >> name;
     for(int i = 0; i < count; i++){
         fin >> name;
         names.push_back(name);
     }
+
     while(!fin.eof()){
         try{
             unsigned int val;
@@ -101,7 +119,7 @@ static std::pair<std::vector<std::string>, std::vector<std::vector<unsigned int>
             std::cout << e.what() << std::endl;
         }
     }
-    std::pair<std::vector<std::string>, std::vector<std::vector<unsigned int>>> config; 
+    opconfig config(names, cha); 
     return config;
 }
 

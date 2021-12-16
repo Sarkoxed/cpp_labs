@@ -25,3 +25,11 @@ void Character::makeStep(){
     }
     a_curtime -= a_steptime;
 }
+
+
+void Character::decTime(unsigned int t){
+    if(t > a_curtime){
+        throw std::out_of_range("no more time");
+    }
+    a_curtime -= t;
+}

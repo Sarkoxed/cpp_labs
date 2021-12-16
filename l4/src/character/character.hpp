@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../inventory/inventory.hpp"
+#include "../../tools/toolib.hpp"
 #include <string>
 
 class Character{
@@ -15,7 +16,7 @@ class Character{
     public:
         unsigned int getCurHealth() const { return a_curhealth; };
         unsigned int getMaxHealth() const { return a_maxhealth; };
-        unsigned int getCurTime() const { return a_radius; };
+        unsigned int getCurTime() const { return a_curtime; };
         unsigned int getMaxTime() const { return a_maxtime; };
         unsigned int getStepTime() const { return a_steptime; };
         unsigned int getRadius() const { return a_radius;};
@@ -25,6 +26,7 @@ class Character{
         void resetTime();
         void setStepTime(unsigned int t);        
         void makeStep();
+        void decTime(unsigned int t);
 
         virtual const bool isTrooper() const{ return false; }
         virtual const bool isBeast() const { return false; }

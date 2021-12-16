@@ -1,14 +1,17 @@
+#pragma once
 #include "character.hpp"
+
+typedef std::vector<std::vector<unsigned int>> bconfig;
 
 class WildBeast: public Character{
     private:
         unsigned int a_damage;
     public:
-        explicit WildBeast(std::vector<std::vector<unsigned int>>& config);
+        explicit WildBeast(bconfig& config);
         unsigned int getDamage() const { return a_damage; };
 
-        const bool isTrooper() const{ return false; }
-        const bool isBeast() const { return true; }
+        const bool isTrooper() const override{ return false; }
+        const bool isBeast() const override{ return true; }
 
 
 };
@@ -17,14 +20,15 @@ class SmartBeast: public Character{
     private:
         Weapon* a_hands;
     public: 
-        explicit SmartBeast(std::vector<std::vector<unsigned int>>& config);
+        explicit SmartBeast(bconfig& config);
         void pickItem(Weapon* item);
-        Item* throwItem();
+        Weapon* throwItem();
 
         unsigned int shoot(unsigned int dist);
+        Weapon* getHand() const{ return a_hands;}
 
-        const bool isTrooper() const{ return false; }
-        const bool isBeast() const { return true; }
+        const bool isTrooper() const override{ return false; }
+        const bool isBeast() const override { return true; }
 };
 
 class ForagerBeast: public Character{
@@ -32,14 +36,16 @@ class ForagerBeast: public Character{
         unsigned int a_strength;
         Inventory a_inventory;
     public:
-        explicit ForagerBeast(std::vector<std::vector<unsigned int>>& config);
+        explicit ForagerBeast(bconfig& config);
         void pickItem(Item* item, unsigned int num = 0);
         Item* throwItem(unsigned int num);
+        Inventory& getInventory(){ return a_inventory;}
+        unsigned int getStrenght() const{return a_strength;}
 
-        const bool isTrooper() const{ return false; }
-        const bool isBeast() const { return true; }
+        const bool isTrooper() const override{ return false; }
+        const bool isBeast() const override { return true; }
 
 
 };
 
-static std::vector<unsigned int> readcofig(const std::string& filename);
+bconfig readbea(const std::string& filename);
