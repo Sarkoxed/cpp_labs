@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
-
+#include <random>
 #pragma once 
 
 template <typename T>
@@ -29,6 +29,8 @@ void getEl(T& x, std::istream& in = std::cin, std::ostream& err= std::cerr){
     }while(!valid);
 }
 
+unsigned int randint(unsigned int a);
+   
 template <typename T>
 std::ostream&operator<<(std::ostream& out,const std::vector<T> &x){
     for(auto i: x){
