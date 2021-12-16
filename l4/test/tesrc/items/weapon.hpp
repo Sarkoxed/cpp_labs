@@ -2,6 +2,8 @@
 
 #include "item.hpp"
 
+typedef std::map<WeaponType, std::vector<unsigned int>> wconfig; 
+
 class Weapon: public Item{
     private:
         WeaponType a_name;
@@ -11,7 +13,7 @@ class Weapon: public Item{
         unsigned int a_mag;
         unsigned int a_fullmag;
     public:
-        explicit Weapon(WeaponType t,std::map<WeaponType, std::vector<unsigned int>>& config);
+        explicit Weapon(WeaponType t,wconfig& config, unsigned int curmag = 0);
         explicit Weapon(const Weapon& vx) = default;
         explicit Weapon(Weapon&& x) = default;
 
@@ -34,6 +36,8 @@ class Weapon: public Item{
         const bool isWeapon() const{ return true; }
         const bool isMedkit() const{ return false; }
         const bool isAmmo() const{ return false; }
+
+        ~Weapon() = default;
 };
 
-static std::map<WeaponType, std::vector<unsigned int>> readconfig(std::string filename);
+wconfig readweapon(std::string filename);

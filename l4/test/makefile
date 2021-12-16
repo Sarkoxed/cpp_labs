@@ -45,7 +45,7 @@ test: test.out
 #test.o: $(TEST_DIR)/test.cpp $(GTEST_HEADERS)
 #	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c $(TEST_DIR)/test.cpp $(ASANFLAGS) -o tests/test.o
 test.out: tests/test.o tests/gtest_main.a
-	$(CXX) $(CXXFLAGS) $(ASANFLAGS) $(DEBUGFLAGS) -lpthread $^ tesrc/**/*.cpp -o $@
+	$(CXX) $(CXXFLAGS) $(ASANFLAGS) $(DEBUGFLAGS) -lpthread $^  tesrc/**/*.cpp  tools/toolib.cpp -o $@
 
 tests/gtest-all.o: gtest-all.o
 gtest-all.o: $(GTEST_SRCS_)

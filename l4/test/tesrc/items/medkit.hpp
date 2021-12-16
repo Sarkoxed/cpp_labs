@@ -28,4 +28,6 @@ class MedKit: public Item{
         const bool isMedkit() const{ return true; }
         const bool isAmmo() const{ return false; }
 
+        ~MedKit() = default;
+
 };

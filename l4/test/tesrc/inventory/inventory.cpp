@@ -5,6 +5,10 @@ void Inventory::add(unsigned int inv, Item* it){
     if(tmp != a_table.end() && a_table[inv] != nullptr){
         throw std::invalid_argument("this cell if full");
     }
+    if(it == nullptr){
+        a_table[inv] = nullptr;
+        return;
+    }
     if(a_curweight + it->getWeight() > a_maxweight){
         throw std::out_of_range("not enough stamina");
     }
@@ -36,8 +40,3 @@ Item* Inventory::operator[](unsigned int inv){
     throw std::out_of_range("no such an element");
 }
 
-Inventory::~Inventory(){
-    for(auto i: a_table){
-        delete i.second;
-    }
-}

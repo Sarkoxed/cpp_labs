@@ -37,4 +37,6 @@ class Bandolier:public Item{
         const bool isWeapon() const{ return false; }
         const bool isMedkit() const{ return false; }
         const bool isAmmo() const{ return true; }
+
+        ~Bandolier() = default;
 };

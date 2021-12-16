@@ -2,29 +2,30 @@
 #include <gtest/gtest.h>
 #include <cassert>
 #include <ostream>
+#include <map>
 
 #include "../tesrc/items/item.hpp"
 #include "../tesrc/items/medkit.hpp"
-#include "../tesrc/items/bandolier.hpp"
+#include "../tesrc/items/bandolier.hpp" 
 #include "../tesrc/items/weapon.hpp"
 #include "../tesrc/inventory/inventory.hpp"
+#include "../tesrc/character/character.hpp"
+#include "../tesrc/character/oper.hpp"
+#include "../tesrc/character/beasts.hpp"
 
 TEST(item, weapon){
-    std::map<WeaponType, std::vector<unsigned int>> x = readconfig("../config/weapons.conf");
+    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
     Weapon pist(WeaponType::pistol, x);
     
     // ned
-    ASSERT_TRUE(pist.getDamage() == 233);
-    ASSERT_TRUE(pist.getCurrentAmmo() == 0);
+    ASSERT_TRUE(pist.getDamage() == 233); ASSERT_TRUE(pist.getCurrentAmmo() == 0);
     ASSERT_TRUE(pist.getFullAmmo() == 13);
     ASSERT_TRUE(pist.getRelTime() == 230);
     ASSERT_TRUE(pist.getShootTime() == 31);
     ASSERT_TRUE(pist.getWeight() == 15);
     
     unsigned int band = 26, time = 1000;
-    pist.reload(band, time);
-    ASSERT_TRUE(band == 13);
-    ASSERT_TRUE(pist.getCurrentAmmo() == 13);
+    pist.reload(band, time); ASSERT_TRUE(band == 13); ASSERT_TRUE(pist.getCurrentAmmo() == 13);
 
     ASSERT_TRUE(pist.getShotResult(4, 2, 10));
 
@@ -75,7 +76,7 @@ TEST(item, bandolier){
 }
 
 TEST(inventory, all){
-    std::map<WeaponType, std::vector<unsigned int>> x = readconfig("../config/weapons.conf");
+    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
     Weapon pist(WeaponType::pistol, x);
     Weapon rifle(WeaponType::rifle, x);
     Bandolier b(WeaponType::canon, 3, 5, 100);
@@ -111,6 +112,234 @@ TEST(inventory, all){
     EXPECT_ANY_THROW(ma.add(20, &b));
 }
 
+TEST(oper, gg){
+    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
+    std::pair<std::vector<std::string>, std::vector<std::vector<unsigned int>>> y = readchar("../config/oper.conf");
+
+    OpAgent a(y);
+    
+
+// --------------- setters + getters 
+    std::vector<unsigned int> vals{a.getCurHealth(), a.getMaxHealth(), a.getCurTime(), a.getMaxTime(), a.getStepTime(), a.getRadius(), a.getAccuracy(), a.getRelTime(), a.getStrength(), a.getCurWeight()};
+    
+    ASSERT_NO_THROW(a.getName());
+
+    a.setStepTime(5);
+    ASSERT_TRUE(a.getStepTime() == 5);
+
+    unsigned int l = a.getCurHealth();
+    a.recieveDamage(l-3);
+    ASSERT_TRUE(a.getCurHealth() == 3);
+    EXPECT_ANY_THROW(a.recieveDamage(100));
+    ASSERT_TRUE(a.isTrooper());
+    ASSERT_FALSE(a.isBeast());
+
+    unsigned int m = a.getRelTime() - 2;
+    a.setReload(a.getRelTime() - 2);
+    ASSERT_TRUE(a.getRelTime() == m);
+    
+
+// -------------- step
+    ASSERT_TRUE(a.getCurTime() == a.getMaxTime());
+    a.makeStep();
+    ASSERT_TRUE(a.getCurTime() == a.getMaxTime() - a.getStepTime());
+
+    a.setStepTime(a.getCurTime() - 2);
+    a.makeStep();
+    EXPECT_ANY_THROW(a.makeStep());
+
+    a.resetTime();
+    ASSERT_TRUE(a.getCurTime() == a.getMaxTime());
+
+// -------------- items
+    Weapon pi(WeaponType::pistol, x, 10);
+    Weapon g(WeaponType::grenade, x, 2);
+    if(a.getStrength() > pi.getWeight() + g.getWeight()){
+        std::cout << "im here" << std::endl;
+        a.pickItem(&pi, 4);
+        a.pickItem(&g, 7);
+
+        EXPECT_ANY_THROW(a.pickItem(&pi, 4));
+        ASSERT_TRUE(a.getHand() == nullptr);
+
+        ASSERT_TRUE(a.getCurWeight() == pi.getWeight() + g.getWeight());
+        
+        a.chooseItemToHold(4);
+        
+        ASSERT_TRUE(a.getCurWeight() == pi.getWeight() + g.getWeight());
+        
+        EXPECT_ANY_THROW(a.chooseItemToHold(5)); 
+        
+        ASSERT_TRUE(a.getHand() == &pi);
+        
+        
+        ASSERT_FALSE(a.getInventory()[7] == nullptr);
+        a.throwItem(7);
+        EXPECT_ANY_THROW(a.getInventory()[7]);
+        
+        ASSERT_TRUE(a.getCurWeight() == pi.getWeight());
+        a.throwHand();
+        ASSERT_TRUE(a.getCurWeight() == 0);
+        ASSERT_TRUE(a.getHand()==nullptr);
+        
+        a.pickItem(&g, 4);
+        a.chooseItemToHold(4);
+        a.shoot(10);
+        ASSERT_TRUE(a.getCurTime() == a.getMaxTime() - a.getHand()->getShootTime());
+
+        EXPECT_ANY_THROW(a.decTime(10000));
+
+        // items
+        a.resetTime();
+        MedKit apt(a.getMaxHealth(), 100, 2);
+        Bandolier bb(WeaponType::grenade, 10, 100, 1);
+        a.reload(bb);
+        ASSERT_TRUE(bb.getCurSize() == 6);
+        a.resetTime();
+        a.heal(apt);
+        ASSERT_TRUE(apt.getIncHealth() == 0);
+        ASSERT_TRUE(a.getCurHealth() == a.getMaxHealth());
+    }
+    // overweight
+    Weapon dd1(WeaponType::canon, x);
+    Weapon dd2(WeaponType::canon, x);
+    Weapon dd3(WeaponType::canon, x);
+    Weapon dd4(WeaponType::canon, x);
+
+    EXPECT_ANY_THROW(a.pickItem(&dd1, 10));
+    EXPECT_ANY_THROW(a.pickItem(&dd2, 11));
+    EXPECT_ANY_THROW(a.pickItem(&dd3, 12));
+    EXPECT_ANY_THROW(a.pickItem(&dd4, 13));
+
+}
+
+TEST(wildbeast, main){
+    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
+    std::vector<std::vector<unsigned int>> y = readbea("../config/beasts.conf");
+    
+    WildBeast a(y);
+    
+    std::vector<unsigned int> vals{a.getCurHealth(), a.getMaxHealth(), a.getCurTime(), a.getMaxTime(), a.getStepTime(), a.getRadius(), a.getAccuracy(), a.getDamage()};
+
+// setters getters
+    a.setStepTime(5);
+    ASSERT_TRUE(a.getStepTime() == 5);
+
+    unsigned int l = a.getCurHealth();
+    a.recieveDamage(l-3);
+    ASSERT_TRUE(a.getCurHealth() == 3);
+    EXPECT_ANY_THROW(a.recieveDamage(100));
+    ASSERT_FALSE(a.isTrooper());
+    ASSERT_TRUE(a.isBeast());
+
+// -------------- step
+    ASSERT_TRUE(a.getCurTime() == a.getMaxTime());
+    a.makeStep();
+    ASSERT_TRUE(a.getCurTime() == a.getMaxTime() - a.getStepTime());
+
+    a.setStepTime(a.getCurTime() - 2);
+    a.makeStep();
+    EXPECT_ANY_THROW(a.makeStep());
+
+    a.resetTime();
+    ASSERT_TRUE(a.getCurTime() == a.getMaxTime());
+}
+
+TEST(smartbeast, all){
+    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
+    std::vector<std::vector<unsigned int>> y = readbea("../config/beasts.conf");
+ 
+    SmartBeast b(y);
+
+// --------------- setters + getters 
+    std::vector<unsigned int> vals{b.getCurHealth(), b.getMaxHealth(), b.getCurTime(), b.getMaxTime(), b.getStepTime(), b.getRadius(), b.getAccuracy()}; 
+    
+    b.setStepTime(5);
+    ASSERT_TRUE(b.getStepTime() == 5);
+
+    unsigned int l = b.getCurHealth();
+    b.recieveDamage(l-3);
+    ASSERT_TRUE(b.getCurHealth() == 3);
+    EXPECT_ANY_THROW(b.recieveDamage(100));
+    ASSERT_FALSE(b.isTrooper());
+    ASSERT_TRUE(b.isBeast());
+
+
+// -------------- step
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime());
+    b.makeStep();
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime() - b.getStepTime());
+
+    b.setStepTime(b.getCurTime() - 2);
+    b.makeStep();
+    EXPECT_ANY_THROW(b.makeStep());
+
+    b.resetTime();
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime());
+
+
+// items
+    Weapon pistol(WeaponType::pistol, x, 10);
+    ASSERT_TRUE(b.getHand() == nullptr);
+    b.pickItem(&pistol);
+    ASSERT_FALSE(b.getHand() == nullptr);
+
+    unsigned int d = b.shoot(10);
+    ASSERT_TRUE(b.getHand()->getCurrentAmmo() == 9);
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime() - b.getHand()->getShootTime());    
+    
+    b.resetTime();
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime());
+    Weapon* tmp = b.throwItem();
+    ASSERT_TRUE(tmp == &pistol);
+    ASSERT_TRUE(b.getHand() == nullptr);
+}
+
+TEST(foragerbeast, all){
+    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
+    std::vector<std::vector<unsigned int>> y = readbea("../config/beasts.conf");
+ 
+    ForagerBeast b(y);
+
+// --------------- setters + getters 
+    std::vector<unsigned int> vals{b.getCurHealth(), b.getMaxHealth(), b.getCurTime(), b.getMaxTime(), b.getStepTime(), b.getRadius(), b.getAccuracy()}; 
+    
+    b.setStepTime(5);
+    ASSERT_TRUE(b.getStepTime() == 5);
+
+    unsigned int l = b.getCurHealth();
+    b.recieveDamage(l-3);
+    ASSERT_TRUE(b.getCurHealth() == 3);
+    EXPECT_ANY_THROW(b.recieveDamage(100));
+    ASSERT_FALSE(b.isTrooper());
+    ASSERT_TRUE(b.isBeast());
+
+
+// -------------- step
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime());
+    b.makeStep();
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime() - b.getStepTime());
+
+    b.setStepTime(b.getCurTime() - 2);
+    b.makeStep();
+    EXPECT_ANY_THROW(b.makeStep());
+
+    b.resetTime();
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime());
+
+// items
+    Weapon pistol(WeaponType::pistol, x, 10);
+    ASSERT_TRUE(b.getInventory().getCurCount() == 0);
+    b.pickItem(&pistol, 3);
+    ASSERT_FALSE(b.getInventory()[3] == nullptr);
+
+    b.resetTime();
+    ASSERT_TRUE(b.getCurTime() == b.getMaxTime());
+    ASSERT_TRUE(b.getInventory().getCurCount() ==1 );
+    Weapon* tmp = dynamic_cast<Weapon*>(b.throwItem(3));
+    EXPECT_ANY_THROW(b.getInventory()[34]);
+    ASSERT_TRUE(tmp == &pistol);
+}
 
 int main(){
     ::testing::InitGoogleTest();
