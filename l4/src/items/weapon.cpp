@@ -2,9 +2,8 @@
 
 #include "weapon.hpp"
 
-Weapon::Weapon(WeaponType x,std::map<WeaponType,std::vector<unsigned int>>& config):a_name(x){
+Weapon::Weapon(WeaponType x, wconfig& config, unsigned int curmag):a_name(x), a_mag(curmag){
     a_type = weapon;
-    a_mag = 0;
 
     if(config[x].size() != 5){
         throw std::invalid_argument("no such a type");
@@ -53,13 +52,13 @@ void Weapon::reload(unsigned int& ammo, unsigned int& time){
     time -= a_treload;
 }
 
-std::map<WeaponType, std::vector<unsigned int>> readconfig(std::string filename){
+wconfig readweapon(std::string filename){
     std::ifstream fin;
     fin.open(filename);
     if(!fin.is_open()){
         throw std::invalid_argument("no such a file");
     }
-    std::map<WeaponType, std::vector<unsigned int>> config;
+    wconfig config;
     while(!fin.eof()){
         try{
             std::string string;
@@ -67,6 +66,9 @@ std::map<WeaponType, std::vector<unsigned int>> readconfig(std::string filename)
             unsigned int val;
             fin >> string;
             fin >> type;
+            if(string == ""){
+                break;
+            }
             for(int i = 0; i < 5; i++){
                 fin >> string;
                 fin >> val;

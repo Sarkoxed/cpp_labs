@@ -1,43 +1,72 @@
 #pragma once
 #include <vector>
 #include <list>
-#include "../character/character.hpp"
+
+#include "../character/oper.hpp"
+#include "../character/beasts.hpp"
+
+#include "../template/vector.hpp"
 
 enum cellType: short{
-    floor = 0,
+    floo = 0,
     wall = 1,
     glass = 2,
     baffle = 3,
     storage = 4
 };
 
-class Cell{
-    private:
-        cellType a_type;
-        std::list<Item> l_items;
-    public:
-        Cell();
+struct Cell{
+    cellType a_type;
+    std::list<Item*> l_items;
+    Character* p_player;
 };
 
 struct Field{
-    std::vector<std::vector<Cell>> a_field;
+    std::vector<Vec<Cell>> a_field;
     unsigned int width;
     unsigned int height;
 };
 
-class level{
+
+
+typedef std::pair<std::pair<unsigned int, unsigned int>, std::vector<std::vector<cellType>>> mapconfig;
+
+typedef std::vector<std::pair<std::vector<unsigned int>, std::pair<unsigned int, unsigned int>>> conftype;
+
+typedef std::pair<std::vector<std::vector<unsigned int>>, std::pair<unsigned int, unsigned int>> lvlmapconfig;
+
+struct lvlconfig{
+    lvlmapconfig lvl;
+    conftype chars;
+    conftype items;
+    conftype charitems;
+};
+
+class Level{
     private:
         Field a_field;
-        std::list<std::string> l_orders;
+        std::list<std::pair<OpAgent*, std::pair<unsigned int, unsigned int>>> l_players;
+        std::list<std::pair<Character*, std::pair<unsigned int, unsigned int>>> l_enemies;
     public:
-        level();
+        explicit Level(const mapconfig& mconf, wconfig& wconf, opconfig& opconf, bconfig& bconf, unsigned int playernum);
 
         std::pair<unsigned int, unsigned int> getSize() const { return std::pair<unsigned int, unsigned int>(a_field.width, a_field.height);}
+
         void setSize(std::pair<unsigned int, unsigned int>);
         
         cellType getCellType(std::pair<unsigned int, unsigned int>) const;
         void setCellType(unsigned int x, unsigned int y, cellType t);
 
         void addItemToCell(unsigned int x, unsigned int y, Item* item);
-        Item* getItemFromCell(unsigned int x, unsigned int y, itemType t);
+        Item* getItemFromCell(unsigned int x, unsigned int y);
+
+
+        
+
 };
+
+mapconfig readmap(const std::string& filename);
+std::list<Item*> genRandomThings(wconfig& wconf);
+
+
+lvlconfig readlvl(const std::string& filename);

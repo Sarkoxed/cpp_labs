@@ -24,5 +24,5 @@ class Inventory{
         Item* extract(unsigned int inv);
 
         Item* operator[](unsigned int inv);
-        ~Inventory();
+        ~Inventory() = default;
 };
