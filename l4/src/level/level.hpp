@@ -4,7 +4,6 @@
 
 #include "../character/oper.hpp"
 #include "../character/beasts.hpp"
-
 #include "../template/vector.hpp"
 
 enum cellType: short{
@@ -26,8 +25,6 @@ struct Field{
     unsigned int width;
     unsigned int height;
 };
-
-
 
 typedef std::pair<std::pair<unsigned int, unsigned int>, std::vector<std::vector<cellType>>> mapconfig;
 
@@ -60,13 +57,23 @@ class Level{
         void addItemToCell(unsigned int x, unsigned int y, Item* item);
         Item* getItemFromCell(unsigned int x, unsigned int y);
 
+        unsigned int getOpCount(){return l_players.size();};
+        unsigned int getBeCount(){return l_enemies.size();};
+
+        Field& getField(){return a_field;};
 
         
+        void destroy(unsigned int x, unsigned int y);
+        void attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
+        void changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
+        void pickItem(unsigned int x, unsigned int y, unsigned int num);
+        void throwItem(unsigned int x, unsigned int y);
 
+        ~Level();  
+
+        friend std::ostream& operator<<(std::ostream& out, const Level& x);
 };
 
 mapconfig readmap(const std::string& filename);
 std::list<Item*> genRandomThings(wconfig& wconf);
-
-
 lvlconfig readlvl(const std::string& filename);

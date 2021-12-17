@@ -2,8 +2,6 @@
 #include "level.hpp"
 
 Level::Level(const mapconfig& mconf, wconfig& wconf, opconfig& opconf, bconfig& bconf, unsigned int playernum){
-    srand(time(0));
-    
     if(playernum > mconf.first.first){
         throw std::invalid_argument("too much players, you need a bigger map");
     }
@@ -15,6 +13,7 @@ Level::Level(const mapconfig& mconf, wconfig& wconf, opconfig& opconf, bconfig& 
             ttm.a_type = mconf.second[i][j];
             ttm.l_items = genRandomThings(wconf);
             ttm.p_player = nullptr;
+            tmp[j] = ttm;
         }
         a_field.a_field.push_back(tmp);
     }
@@ -54,6 +53,22 @@ Level::Level(const mapconfig& mconf, wconfig& wconf, opconfig& opconf, bconfig& 
     }
     l_players = players;
     l_enemies = beasts;
+}
+
+Level::~Level(){
+    for(auto i: l_players){
+        delete i.first;
+    }
+    for(auto i: l_enemies){
+        delete i.first;
+    }
+    for(auto i: a_field.a_field){
+        for(auto j: i){
+            for(auto k: j.l_items){
+                delete k;
+            }
+        }
+    }
 }
 
 
@@ -151,3 +166,78 @@ mapconfig readmap(const std::string& filename){
 //    return lvlconfig;
 //    
 //}
+
+
+std::ostream& operator<<(std::ostream& out, const Level& x){
+    std::string str(" #^-");
+    for(auto i: x.a_field.a_field){
+        for(auto j: i){
+            out << "****";
+        }
+        out << std::endl;
+        for(auto j: i){
+            out << "*";
+            if(j.a_type != cellType::floo && j.a_type != cellType::storage){
+                char c = str.c_str()[static_cast<int>(j.a_type)];
+                out << c << c << c;
+            }
+            else if(j.a_type == cellType::floo){
+                out << "   ";
+            }
+            else{
+                out << "@ @";
+            }
+        }
+        out << std::endl;
+        for(auto j: i){
+            out << "*";
+            if(j.a_type != cellType::floo && j.a_type != cellType::storage){
+                char c = str.c_str()[static_cast<int>(j.a_type)];
+                out << c << c << c;
+            }
+            else if(j.p_player == nullptr){
+                out << "   ";
+            }
+            else if(j.p_player->isTrooper()){
+                out << " O ";
+            }
+            else if(j.p_player->isBeast()){
+                if(j.p_player->isWild()){
+                    out << " W ";
+                }
+                else if(j.p_player->isSmart()){
+                    out << " S ";
+                }
+                else{
+                    out << " F ";    
+                }
+            }
+        }
+        out << std::endl;
+        for(auto j: i){
+            out << "*";
+            if(j.a_type != cellType::floo && j.a_type != cellType::storage){
+                char c = str.c_str()[static_cast<int>(j.a_type)];
+                out << c << c << c;
+            }
+            else if(j.l_items.size() == 0){
+                out << "   ";
+            }
+            else if(j.l_items.front()->isAmmo()){
+                out << "A  ";
+            }
+            else if(j.l_items.front()->isMedkit()){
+                out << " M ";
+            }
+            else{
+                out << "  B";
+            }
+        }
+        out << std::endl;
+    }
+//    for(int i = 0; i < x.a_field; i++){
+//        out << "****";
+//    }
+    out << std::endl;
+    return out;
+}
