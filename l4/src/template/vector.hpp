@@ -1,62 +1,89 @@
 #include "iostream"
 #include <iterator>
 
-
+/** This is the class vector. Iterator is implemented.
+ *  
+ * It's a sequence container that encapsulates dynsmic
+ * size arrays.
+ * All the elements stored one by one, however there's
+ * an opportunity for a really resourceful users, to 
+ * get the access to any element.
+ *
+ * The "length" of Vec always increases, when you push
+ * new elements to it's back.
+ *
+ * Time complexity is:
+ *   random access: O(1)
+ *   insertion is O(1)( O(n) if there's no reserved space)
+ *
+ * Template parameters
+ *   T must be copyAssignable, copyConstructible
+ *
+*/
 template<typename T>
 class Vec{
     private:
-        T* p_array;
-        unsigned int a_size;
+        T* p_array; //!< simple array 
+        unsigned int a_size; //!< Unsigned integer type
     public:
+        /**
+         *  Iterator Class for vector.
+         *
+         *  Bidirectional iterator.
+         */
         class vec_iterator{
-            using iterator_category = std::random_access_iterator_tag;
-            using difference_type   = std::ptrdiff_t;
-            using value_type        = T;
-            using pointer           = T*;
-            using reference         = T&;
-            
-            private:
-                pointer p_ptr;
             public:
+                using iterator_category = std::bidirectional_iterator_tag;
+                using difference_type   = std::ptrdiff_t;
+                using value_type        = T;
+                using pointer           = T*;
+                using reference         = T&; 
+
                 explicit vec_iterator(pointer p):p_ptr(p){}
                 T& operator*() const { return *p_ptr; }
                 T* operator->() { return p_ptr; }
 
                 vec_iterator& operator++(){p_ptr++; return *this;}
+                vec_iterator& operator--(){p_ptr--; return *this;}
                 vec_iterator operator++(int) { vec_iterator tmp = *this; ++(*this); return tmp;}
+                vec_iterator operator--(int) { vec_iterator tmp = *this; --(*this); return tmp;}
 
                 friend bool operator==(const vec_iterator& a, const vec_iterator& b) { return a.p_ptr == b.p_ptr; }
                 friend bool operator!=(const vec_iterator& a, const vec_iterator& b) { return a.p_ptr != b.p_ptr; }
+             private:
+                pointer p_ptr;
         };
 
 
-        explicit Vec(unsigned int n = 0) : p_array(new T [n]), a_size(n){}
-        Vec(const Vec& copy);
-        Vec(Vec&& move);
+        explicit Vec(unsigned int n = 0) : p_array(new T [n]), a_size(n){} //!< Simple constructor, that creates an empty vector of size n.
+        Vec(const Vec& copy); //!< Copy constructor. 
+        Vec(Vec&& move);    //!< Move constructor. 
         explicit Vec(const T* vals, int n);
-        ~Vec(){delete[] p_array;}
+        ~Vec(){delete[] p_array;} //!< Destructs the vector 
 
-        friend bool operator==(const Vec& a, const Vec&b) {return a==b;};
-        friend bool operator!=(const Vec& a, const Vec&b) {return a!=b;}
-        bool operator==(const Vec& r);
-        bool operator!=(const Vec& r);
+        friend bool operator==(const Vec& a, const Vec&b) {return a==b;}; //!< Comparing the values of vectors
+        friend bool operator!=(const Vec& a, const Vec&b) {return a!=b;}  //!< Comparing the values of vectors
+        bool operator==(const Vec& r);//!< Comparing the values of vectors
+        bool operator!=(const Vec& r);//!< Comparing the values of vectors
 
-        Vec& operator=(const Vec& cp);
-        Vec& operator=(Vec&& mv);
+
+        Vec& operator=(const Vec& cp); //!< Copy assignment
+        Vec& operator=(Vec&& mv); //!< Move assignment
         
-        const int size()const{return a_size;}
+        const unsigned int size()const{return a_size;} //!< Returns an amount of elements
 
-        const T& operator[](int num) const;
-        T& operator[](int num);
+        const T& operator[](int num) const;  //!< Access specified element
+        T& operator[](int num); //!< Access + Update
 
-        void pushBack(const T& x);
+        void pushBack(const T& x); //!adds an element to the end
         
-        vec_iterator begin() { return vec_iterator(p_array);}
-        vec_iterator end() { return vec_iterator(p_array + a_size);}
-
+        vec_iterator begin() { return vec_iterator(p_array);} //!< returns the iterator to the begining
+        vec_iterator end() { return vec_iterator(p_array + a_size);} //!< returns the iterator to the end
 };
 
-
+/**<  fulfilles the new vector with the copy of other vector contents
+ *    Complexity: O(n)
+ */
 template<typename T>
 Vec<T>::Vec(const Vec<T>& copy):a_size(copy.a_size){
     p_array = new T [a_size];
@@ -64,12 +91,19 @@ Vec<T>::Vec(const Vec<T>& copy):a_size(copy.a_size){
 }
 
 
+/**<  fulfilles the new vector with literally other vector contents
+ *    Complexity: O(1)
+ */
 template<typename T>
 Vec<T>::Vec(Vec<T>&& move):a_size(move.a_size){
     p_array = move.p_array;
     move.p_array = nullptr;
 }
 
+
+/**< fulfilles the new vector with the copy of c-like array contents
+ *   Complexity: O(n)
+ */
 template<typename T>
 Vec<T>::Vec(const T* vals, int n){
     if(n < 0){
@@ -112,6 +146,9 @@ bool Vec<T>::operator!=(const Vec<T>& r){
     return false;
 }
 
+/**< replaces the contents of the vector with a copy of the contents of other
+ *   Complexity: O(n)?
+*/
 template<typename T>
 Vec<T>& Vec<T>::operator=(const Vec<T>& cp){
     if(this != &cp){
@@ -122,6 +159,9 @@ Vec<T>& Vec<T>::operator=(const Vec<T>& cp){
     return *this;
 }
 
+/**< replaces the contents of the vector with a copy of the contents of other, erasing the contents in other 
+ *   Complexity: O(1)?
+ */
 template<typename T>
 Vec<T>& Vec<T>::operator=(Vec<T>&& mv){
     if(this != &mv){
@@ -133,6 +173,9 @@ Vec<T>& Vec<T>::operator=(Vec<T>&& mv){
     return *this;
 }
 
+/**< returns the constant reference to the element at specified location pos. Bounds are checked.
+ *   Complexity: O(1)
+ */
 template<typename T>
 const T& Vec<T>::operator[](int num) const{
     if(num < 0 || num >= a_size){
@@ -141,6 +184,9 @@ const T& Vec<T>::operator[](int num) const{
     return p_array[num];
 }
 
+/**< returns the reference to the element at specified location pos. Bounds are checked. 
+ *   complexity: O(1)
+ */
 template<typename T>
 T& Vec<T>::operator[](int num){
     if(num < 0 || num >= a_size){
@@ -149,7 +195,9 @@ T& Vec<T>::operator[](int num){
     return p_array[num];
 }
 
-
+/** inserts new element to the end of the vector, allocating new memory every time 
+ *  complexity: O(n)
+ */
 template<typename T>
 void Vec<T>::pushBack(const T& x){
     T* tmp = new T [a_size+1];
