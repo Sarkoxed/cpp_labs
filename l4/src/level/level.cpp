@@ -241,3 +241,28 @@ std::ostream& operator<<(std::ostream& out, const Level& x){
     out << std::endl;
     return out;
 }
+
+
+void Level::destroy(unsigned int x, unsigned int y){
+    if(a_field.a_field[x][y].a_type != cellType::glass || a_field.a_field[x][y].a_type != cellType::baffle){
+        a_field.a_field[x][y].a_type = cellType::floo;
+        return;
+    }
+    throw std::invalid_argument("you cannot destroy it");
+}
+
+void attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
+
+void Level::changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1){
+    if(a_field.a_field[x1][y1].p_player == nullptr){
+        std::swap(a_field.a_field[x1][y1].p_player,a_field.a_field[x][y].p_player);
+        // change in list
+        return;
+    }
+
+}
+
+void pickItem(unsigned int x, unsigned int y, unsigned int num);
+        void throwItem(unsigned int x, unsigned int y);
+
+void save(const std::string& filename);
