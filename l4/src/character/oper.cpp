@@ -3,7 +3,6 @@
 
 
 OpAgent::OpAgent(opconfig& config){
-    srand(time(0));
     unsigned int num = randint(config.second[0].size()-1);
     int j = 0;
     a_name = config.first[num];

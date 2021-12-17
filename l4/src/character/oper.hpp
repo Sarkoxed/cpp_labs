@@ -38,6 +38,12 @@ class OpAgent: public Character{
         
         const bool isTrooper() const override { return true; }
         const bool isBeast() const override { return false; }
+        const bool isWild() const override{ return false; };
+        const bool isSmart() const override{ return false;};
+        const bool isForager() const override{ return false;};
+
+
+        ~OpAgent() = default;
 };
 
 opconfig readchar(const std::string& filename);

@@ -12,8 +12,11 @@ class WildBeast: public Character{
 
         const bool isTrooper() const override{ return false; }
         const bool isBeast() const override{ return true; }
+        const bool isWild() const override{ return true; };
+        const bool isSmart() const override{ return false;};
+        const bool isForager() const override{ return false;};
 
-
+        ~WildBeast() = default;
 };
 
 class SmartBeast: public Character{
@@ -29,6 +32,10 @@ class SmartBeast: public Character{
 
         const bool isTrooper() const override{ return false; }
         const bool isBeast() const override { return true; }
+        const bool isWild() const override{ return false; };
+        const bool isSmart() const override{ return true;};
+        const bool isForager() const override{ return false;};
+        ~SmartBeast() = default;
 };
 
 class ForagerBeast: public Character{
@@ -44,8 +51,11 @@ class ForagerBeast: public Character{
 
         const bool isTrooper() const override{ return false; }
         const bool isBeast() const override { return true; }
+        const bool isWild() const override{ return false; };
+        const bool isSmart() const override{ return false;};
+        const bool isForager() const override{ return true;};
 
-
+        ~ForagerBeast() = default;
 };
 
 bconfig readbea(const std::string& filename);
