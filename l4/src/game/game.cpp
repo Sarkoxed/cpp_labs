@@ -11,8 +11,14 @@ int main(){
 
     //Level lvl(ma, wep, op, be, 3);
 
-
     sf::RenderWindow window(sf::VideoMode(800, 600), "operation");
+    sf::Clock clock;
+    float time;
+
+    window.setVerticalSyncEnabled(true);
+    time = clock.getElapsedTime().asMilliseconds();
+    clock.restart();
+
 
     while(window.isOpen()){
         sf::Event event;
@@ -21,6 +27,7 @@ int main(){
                 window.close();
             }
             window.clear();
+            
             
 
 
