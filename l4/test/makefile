@@ -37,16 +37,16 @@ GTEST_INCLUDE2=../googletest/googletest/include/gtest
 #.PHONY: tests/gtest-all.o tests/gtest_main.o tests/gtest_main.a tests/test.o
 
 .PHONY: test
-test: test.out
-	@./test.out
+test: innanan
+	@./innanan
 	@echo "============================================================================"
 
 #tests/test.o: test.o
 #test.o: $(TEST_DIR)/test.cpp $(GTEST_HEADERS)
 #	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c $(TEST_DIR)/test.cpp $(ASANFLAGS) -o tests/test.o
-test.out: tests/test.o tests/gtest_main.a
+innanan: tests/test.o tests/gtest_main.a
 	$(CXX) $(CXXFLAGS) $(ASANFLAGS) $(DEBUGFLAGS) -lpthread $^  tesrc/**/*.cpp  tools/toolib.cpp -o $@
-
+	
 tests/gtest-all.o: gtest-all.o
 gtest-all.o: $(GTEST_SRCS_)
 	$(CXX) -I $(GTEST_DIR) -I $(GTEST_INCLUDE) $(DEBUGFLAGS) $(CXXFLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o tests/$@

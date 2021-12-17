@@ -3,7 +3,6 @@
 
 
 WildBeast::WildBeast(bconfig& config){
-    srand(time(0));
     unsigned int num = randint(config[0].size());
     int j = 0;
     a_maxhealth = config[j++][num];
@@ -18,7 +17,6 @@ WildBeast::WildBeast(bconfig& config){
 
 
 SmartBeast::SmartBeast(bconfig& config){
-    srand(time(0));
     unsigned int num = randint(config[0].size());
     int j = 0;
     a_maxhealth = config[j++][num];
@@ -33,7 +31,6 @@ SmartBeast::SmartBeast(bconfig& config){
 
 
 ForagerBeast::ForagerBeast(bconfig& config){
-    srand(time(0));
     unsigned int num = randint(config[0].size());
     int j = 0;
     a_maxhealth = config[j++][num];

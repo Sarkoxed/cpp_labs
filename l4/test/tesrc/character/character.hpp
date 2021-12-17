@@ -30,6 +30,12 @@ class Character{
 
         virtual const bool isTrooper() const{ return false; }
         virtual const bool isBeast() const { return false; }
+        virtual const bool isWild() const { return false; };
+        virtual const bool isSmart() const { return false;};
+        virtual const bool isForager() const { return false;};
+
+
+        virtual ~Character() = default;
 };
 
 

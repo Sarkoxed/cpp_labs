@@ -4,14 +4,17 @@
 #include <ostream>
 #include <map>
 
-#include "../tesrc/items/item.hpp"
-#include "../tesrc/items/medkit.hpp"
-#include "../tesrc/items/bandolier.hpp" 
-#include "../tesrc/items/weapon.hpp"
-#include "../tesrc/inventory/inventory.hpp"
-#include "../tesrc/character/character.hpp"
-#include "../tesrc/character/oper.hpp"
-#include "../tesrc/character/beasts.hpp"
+//#include "../tesrc/items/item.hpp"
+//#include "../tesrc/items/medkit.hpp"
+//#include "../tesrc/items/bandolier.hpp" 
+//#include "../tesrc/items/weapon.hpp"
+//#include "../tesrc/inventory/inventory.hpp"
+//#include "../tesrc/character/character.hpp"
+//#include "../tesrc/character/oper.hpp"
+//#include "../tesrc/character/beasts.hpp"
+
+#include "../tesrc/level/level.hpp"
+
 
 TEST(item, weapon){
     std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
@@ -341,7 +344,21 @@ TEST(foragerbeast, all){
     ASSERT_TRUE(tmp == &pistol);
 }
 
+TEST(level, fucc){
+    wconfig wep = readweapon("../config/weapons.conf");
+    opconfig op = readchar("../config/oper.conf");
+    bconfig be = readbea("../config/beasts.conf");
+    mapconfig ma = readmap("../config/map.conf");
+    Level lvl(ma, wep, op, be, 3);   
+
+    // check for collisions
+    unsigned int all = lvl.getOpCount() + lvl.getBeCount();
+    unsigned int count = 0;
+    SUCCEED();
+}
+
 int main(){
+    srand(time(0));
     ::testing::InitGoogleTest();
     return RUN_ALL_TESTS();
 }
