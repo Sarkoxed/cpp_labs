@@ -47,9 +47,9 @@ class Vec{
                 vec_iterator& operator--(){p_ptr--; return *this;}
                 vec_iterator operator++(int) { vec_iterator tmp = *this; ++(*this); return tmp;}
                 vec_iterator operator--(int) { vec_iterator tmp = *this; --(*this); return tmp;}
-
                 friend bool operator==(const vec_iterator& a, const vec_iterator& b) { return a.p_ptr == b.p_ptr; }
                 friend bool operator!=(const vec_iterator& a, const vec_iterator& b) { return a.p_ptr != b.p_ptr; }
+
              private:
                 pointer p_ptr;
         };

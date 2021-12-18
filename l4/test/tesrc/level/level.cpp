@@ -235,9 +235,43 @@ std::ostream& operator<<(std::ostream& out, const Level& x){
         }
         out << std::endl;
     }
-//    for(int i = 0; i < x.a_field; i++){
-//        out << "****";
-//    }
+
+    for(auto i: x.a_field.a_field){
+        out << "***";
+    }
     out << std::endl;
     return out;
 }
+
+
+void Level::destroy(unsigned int x, unsigned int y){
+    if(a_field.a_field[x][y].a_type == cellType::glass || a_field.a_field[x][y].a_type == cellType::baffle){
+        a_field.a_field[x][y].a_type = cellType::floo;
+        return;
+    }
+    throw std::invalid_argument("you cannot destroy it");
+}
+
+
+void Level::changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1){
+    if(a_field.a_field[x1][y1].p_player == nullptr){
+        std::swap(a_field.a_field[x1][y1].p_player,a_field.a_field[x][y].p_player);
+        for(auto i: l_players){
+            if(i.second.first == x && i.second.second == y){
+                i.second = std::pair<unsigned int, unsigned int>(x1, y1);
+            }
+        }
+        return;
+    }
+    throw std::out_of_range("YOU SHALL NOT PASS");
+}
+
+
+
+void attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
+void pickItem(unsigned int x, unsigned int y, unsigned int num);
+void Level::throwItem(unsigned int x, unsigned int y){
+    //Item* r = a_field.a_field[x][y].p_player->throwItem();
+    //a_field.a_field[x][y].l_items.push_back(r);
+}
+void save(const std::string& filename);

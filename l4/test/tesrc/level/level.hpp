@@ -69,6 +69,8 @@ class Level{
         void pickItem(unsigned int x, unsigned int y, unsigned int num);
         void throwItem(unsigned int x, unsigned int y);
 
+        void save(const std::string& filename);
+
         ~Level();  
 
         friend std::ostream& operator<<(std::ostream& out, const Level& x);

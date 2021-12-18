@@ -29,7 +29,7 @@ class OpAgent: public Character{
         void chooseItemToHold(unsigned int num);
 
         void pickItem(Item* item, unsigned int num);
-        Item* throwItem(unsigned int num);
+        Item* throwItem(unsigned int num = 0);
         Item* throwHand();
 
         void reload(Bandolier& ammo);

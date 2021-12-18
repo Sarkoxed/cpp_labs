@@ -51,6 +51,12 @@ void OpAgent::pickItem(Item* item, unsigned int num){
 }
 
 Item* OpAgent::throwItem(unsigned int num){
+    if(num == 0){
+        Item* tmp = a_hands;
+        a_hands = nullptr;
+        a_curweight -= tmp->getWeight();
+        return tmp;
+    }
     Item* tmp = a_inventory.extract(num);
     a_curweight -= tmp->getWeight();
     return tmp;
