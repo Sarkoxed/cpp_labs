@@ -3,8 +3,6 @@
 #include "character.hpp"
 #include <random>
 
-typedef std::pair<std::vector<std::string>, std::vector<std::vector<unsigned int>>> opconfig; 
-
 class OpAgent: public Character{
     private:
         std::string a_name;
@@ -14,7 +12,7 @@ class OpAgent: public Character{
         Inventory a_inventory;
         Weapon* a_hands;
     public:
-        explicit OpAgent(opconfig& config);
+        explicit OpAgent(nlohmann::json& js);
 
         std::string getName() const { return a_name; };
         unsigned int getRelTime() const { return a_reloadtime;};
@@ -27,6 +25,7 @@ class OpAgent: public Character{
         void setReload(unsigned int rel);
         void changeWeight(unsigned int weigh);      
         void chooseItemToHold(unsigned int num);
+        Item* pickItemToHold(Item* item);
 
         void pickItem(Item* item, unsigned int num);
         Item* throwItem(unsigned int num = 0);
@@ -45,5 +44,3 @@ class OpAgent: public Character{
 
         ~OpAgent() = default;
 };
-
-opconfig readchar(const std::string& filename);

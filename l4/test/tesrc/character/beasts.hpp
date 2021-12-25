@@ -7,7 +7,7 @@ class WildBeast: public Character{
     private:
         unsigned int a_damage;
     public:
-        explicit WildBeast(bconfig& config);
+        explicit WildBeast(nlohmann::json& config);
         unsigned int getDamage() const { return a_damage; };
 
         const bool isTrooper() const override{ return false; }
@@ -23,8 +23,8 @@ class SmartBeast: public Character{
     private:
         Weapon* a_hands;
     public: 
-        explicit SmartBeast(bconfig& config);
-        void pickItem(Weapon* item);
+        explicit SmartBeast(nlohmann::json& config);
+        void takeItem(Weapon* item);
         Weapon* throwItem();
 
         unsigned int shoot(unsigned int dist);
@@ -43,7 +43,7 @@ class ForagerBeast: public Character{
         unsigned int a_strength;
         Inventory a_inventory;
     public:
-        explicit ForagerBeast(bconfig& config);
+        explicit ForagerBeast(nlohmann::json& config);
         void pickItem(Item* item, unsigned int num = 0);
         Item* throwItem(unsigned int num);
         Inventory& getInventory(){ return a_inventory;}
@@ -57,5 +57,3 @@ class ForagerBeast: public Character{
 
         ~ForagerBeast() = default;
 };
-
-bconfig readbea(const std::string& filename);

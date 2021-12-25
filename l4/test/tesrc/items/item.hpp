@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 
+#include "../../../json/single_include/nlohmann/json.hpp"
 #include "../../tools/toolib.hpp"
 
 enum class WeaponType: short{

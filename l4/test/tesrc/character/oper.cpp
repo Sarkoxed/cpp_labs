@@ -1,24 +1,79 @@
 // sarkoxed //
 #include "oper.hpp"
 
-
-OpAgent::OpAgent(opconfig& config){
-    unsigned int num = randint(config.second[0].size()-1);
-    int j = 0;
-    a_name = config.first[num];
-    a_strength = config.second[j++][num];
-    a_maxhealth = config.second[j++][num];
-    a_curhealth = a_maxhealth;
-    a_maxtime = config.second[j++][num];
-    a_curtime = a_maxtime;
-    a_steptime = config.second[j++][num];
-    a_radius = config.second[j++][num];
-    a_accuracy = config.second[j++][num];
-    a_reloadtime = 0;
-    a_curweight = 0;
+OpAgent::OpAgent(nlohmann::json& js){
+    unsigned int num = js["a_name"].size();
+    num = randint(num-1);
+    a_name = std::string(js["a_name"][num]); 
+    a_strength = js["a_strength"][num];
+    a_maxhealth = js["a_maxhealth"][num];
+    try{
+        a_curhealth = js["a_curhealth"][num];
+    }
+    catch(const std::exception& e){
+        a_curhealth = a_maxhealth;
+    }
+    a_maxtime = js["a_maxtime"][num]; 
+    try{
+        a_curtime = js["a_curtime"][num];
+    }
+    catch(const std::exception& e){
+        a_curtime = a_maxtime;
+    } 
+    a_steptime = js["a_steptime"][num]; 
+    a_radius = js["a_radius"][num];
+    a_accuracy = js["a_accuracy"][num]; 
+    try{    
+        a_reloadtime = js["a_reloadtime"][num];
+    }
+    catch(const std::exception& e){
+        a_reloadtime = 0;
+    }
+    try{
+        a_curweight  = js["a_curweight"][num];
+    }
+    catch(const std::exception& e){
+        a_curweight = 0;
+    }
     a_hands = nullptr;
-
     a_inventory = Inventory(0, a_strength, 0);
+    if(js.contains("items")){
+        auto jj = js["items"];
+        if(jj.contains("inventory")){
+            for(auto it: jj["inventory"]){
+                ItemType type = static_cast<ItemType>(it["type"]);
+                Item* tmp;
+                if(type == ItemType::weapon){
+                    tmp = new Weapon(it, static_cast<WeaponType>(it["a_name"]));
+                }
+                else if(type == ItemType::medkit){
+                    tmp = new MedKit(it["increasing"], it["heltime"], it["a_weight"]);
+                }
+                else{
+                    auto type = static_cast<WeaponType>(it["a_name"]);
+                    tmp = new Bandolier(type, it["a_curs      ize"], it["a_maxsize"], it["a_weight"]);
+                }
+                pickItem(tmp, it["num"]);
+            }
+        }
+
+        if(jj.contains("hands")){
+            auto it = jj["hands"];
+            ItemType type = static_cast<ItemType>(it["type"]);
+            Item* tmp;
+            if(type == ItemType::weapon){
+                tmp = new Weapon(it, static_cast<WeaponType>(it["a_name"]));
+            }
+            else if(type == ItemType::medkit){
+                tmp = new MedKit(it["increasing"], it["heltime"], it["a_weight"]);
+            }
+            else{
+                auto tp = static_cast<WeaponType>(it["a_name"]);
+                tmp = new Bandolier(tp, it["a_curs      ize"], it["a_maxsize"], it["a_weight"]);
+            }
+            pickItemToHold(tmp);
+        }
+    }
 }
 
 void OpAgent::setReload(unsigned int rel){
@@ -46,8 +101,22 @@ void OpAgent::pickItem(Item* item, unsigned int num){
             throw std::out_of_range("not enough stamina");
         }
     }
+    else if(a_curweight + item->getWeight() > a_strength){
+        throw std::out_of_range("not enough stamina");
+    }
     a_inventory.add(num, item);
     a_curweight += item->getWeight(); 
+}
+
+Item* OpAgent::pickItemToHold(Item *item){
+    if(item->isWeapon()){
+        Weapon* w = dynamic_cast<Weapon*>(item);
+        Item* tmp = a_hands;
+        a_hands = w;
+        a_reloadtime = w->getRelTime();
+        return tmp;
+    }
+    throw std::invalid_argument("not a weapon");
 }
 
 Item* OpAgent::throwItem(unsigned int num){
@@ -91,40 +160,39 @@ unsigned int OpAgent::shoot(unsigned int dist){
     return 0;
 }
 
-opconfig readchar(const std::string& filename){
-    std::ifstream fin;
-    fin.open(filename);
-    if(!fin.is_open()){
-        throw std::invalid_argument("no such a file");
-    }
-    
-    std::vector<std::vector<unsigned int>> cha;
-    int count;
-    fin >> count;
-    
-    std::vector<std::string> names;
-    std::string name;
-    for(int i = 0; i < count; i++){
-        fin >> name;
-        names.push_back(name);
-    }
-
-    while(!fin.eof()){
-        try{
-            unsigned int val;
-            fin >> name;
-            std::vector<unsigned int> vals;
-            for(int i = 0; i < count; i++){
-                fin >> val;
-                vals.push_back(val);
-            }
-            cha.push_back(vals);
-        }
-        catch(const std::exception& e){
-            std::cout << e.what() << std::endl;
-        }
-    }
-    opconfig config(names, cha); 
-    return config;
-}
-
+//opconfig readchar(const std::string& filename){
+//    std::ifstream fin;
+//    fin.open(filename);
+//    if(!fin.is_open()){
+//        throw std::invalid_argument("no such a file");
+//    }
+//    
+//    std::vector<std::vector<unsigned int>> cha;
+//    int count;
+//    fin >> count;
+//    
+//    std::vector<std::string> names;
+//    std::string name;
+//    for(int i = 0; i < count; i++){
+//        fin >> name;
+//        names.push_back(name);
+//    }
+//
+//    while(!fin.eof()){
+//        try{
+//            unsigned int val;
+//            fin >> name;
+//            std::vector<unsigned int> vals;
+//            for(int i = 0; i < count; i++){
+//                fin >> val;
+//                vals.push_back(val);
+//            }
+//            cha.push_back(vals);
+//        }
+//        catch(const std::exception& e){
+//            std::cout << e.what() << std::endl;
+//        }
+//    }
+//    opconfig config(names, cha); 
+//    return config;
+//}

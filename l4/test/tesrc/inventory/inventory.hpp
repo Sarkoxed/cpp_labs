@@ -22,6 +22,7 @@ class Inventory{
         const unsigned int getCurCount()const{return a_itcount;}
         void add(unsigned int inv, Item* it);
         Item* extract(unsigned int inv);
+        std::map<unsigned int, Item*>* getTable() {return &a_table;}
 
         Item* operator[](unsigned int inv);
         ~Inventory() = default;

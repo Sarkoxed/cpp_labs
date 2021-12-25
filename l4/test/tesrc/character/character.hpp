@@ -2,6 +2,8 @@
 
 #include "../inventory/inventory.hpp"
 #include "../../tools/toolib.hpp"
+#include "../../../json/single_include/nlohmann/json.hpp"
+
 #include <string>
 
 class Character{
@@ -33,7 +35,6 @@ class Character{
         virtual const bool isWild() const { return false; };
         virtual const bool isSmart() const { return false;};
         virtual const bool isForager() const { return false;};
-
 
         virtual ~Character() = default;
 };

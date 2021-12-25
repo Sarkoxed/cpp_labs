@@ -4,21 +4,11 @@
 #include <ostream>
 #include <map>
 
-//#include "../tesrc/items/item.hpp"
-//#include "../tesrc/items/medkit.hpp"
-//#include "../tesrc/items/bandolier.hpp" 
-//#include "../tesrc/items/weapon.hpp"
-//#include "../tesrc/inventory/inventory.hpp"
-//#include "../tesrc/character/character.hpp"
-//#include "../tesrc/character/oper.hpp"
-//#include "../tesrc/character/beasts.hpp"
-
 #include "../tesrc/level/level.hpp"
 
-
 TEST(item, weapon){
-    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
-    Weapon pist(WeaponType::pistol, x);
+    nlohmann::json x = getconf("../config/weapons.json");
+    Weapon pist(x, WeaponType::pistol);
     
     // ned
     ASSERT_TRUE(pist.getDamage() == 233); ASSERT_TRUE(pist.getCurrentAmmo() == 0);
@@ -79,9 +69,9 @@ TEST(item, bandolier){
 }
 
 TEST(inventory, all){
-    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
-    Weapon pist(WeaponType::pistol, x);
-    Weapon rifle(WeaponType::rifle, x);
+    auto x = getconf("../config/weapons.json");
+    Weapon pist(x, WeaponType::pistol);
+    Weapon rifle(x, WeaponType::rifle);
     Bandolier b(WeaponType::canon, 3, 5, 100);
     MedKit m(100, 14, 10);
     
@@ -116,8 +106,8 @@ TEST(inventory, all){
 }
 
 TEST(oper, gg){
-    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
-    std::pair<std::vector<std::string>, std::vector<std::vector<unsigned int>>> y = readchar("../config/oper.conf");
+    auto x = getconf("../config/weapons.json");
+    auto y = getconf("../config/oper.json");
 
     OpAgent a(y);
     
@@ -155,8 +145,8 @@ TEST(oper, gg){
     ASSERT_TRUE(a.getCurTime() == a.getMaxTime());
 
 // -------------- items
-    Weapon pi(WeaponType::pistol, x, 10);
-    Weapon g(WeaponType::grenade, x, 2);
+    Weapon pi(x,WeaponType::pistol, 10);
+    Weapon g(x,WeaponType::grenade, 2);
     if(a.getStrength() > pi.getWeight() + g.getWeight()){
         std::cout << "im here" << std::endl;
         a.pickItem(&pi, 4);
@@ -204,10 +194,10 @@ TEST(oper, gg){
         ASSERT_TRUE(a.getCurHealth() == a.getMaxHealth());
     }
     // overweight
-    Weapon dd1(WeaponType::canon, x);
-    Weapon dd2(WeaponType::canon, x);
-    Weapon dd3(WeaponType::canon, x);
-    Weapon dd4(WeaponType::canon, x);
+    Weapon dd1(x, WeaponType::canon);
+    Weapon dd2(x, WeaponType::canon);
+    Weapon dd3(x, WeaponType::canon);
+    Weapon dd4(x, WeaponType::canon);
 
     EXPECT_ANY_THROW(a.pickItem(&dd1, 10));
     EXPECT_ANY_THROW(a.pickItem(&dd2, 11));
@@ -217,8 +207,8 @@ TEST(oper, gg){
 }
 
 TEST(wildbeast, main){
-    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
-    std::vector<std::vector<unsigned int>> y = readbea("../config/beasts.conf");
+    auto x = getconf("../config/weapons.json");
+    auto y = getconf("../config/beasts.json");
     
     WildBeast a(y);
     
@@ -249,8 +239,8 @@ TEST(wildbeast, main){
 }
 
 TEST(smartbeast, all){
-    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
-    std::vector<std::vector<unsigned int>> y = readbea("../config/beasts.conf");
+    auto x = getconf("../config/weapons.json");
+    auto y = getconf("../config/beasts.json");
  
     SmartBeast b(y);
 
@@ -282,9 +272,9 @@ TEST(smartbeast, all){
 
 
 // items
-    Weapon pistol(WeaponType::pistol, x, 10);
+    Weapon pistol(x,WeaponType::pistol,  10);
     ASSERT_TRUE(b.getHand() == nullptr);
-    b.pickItem(&pistol);
+    b.takeItem(&pistol);
     ASSERT_FALSE(b.getHand() == nullptr);
 
     unsigned int d = b.shoot(10);
@@ -299,8 +289,8 @@ TEST(smartbeast, all){
 }
 
 TEST(foragerbeast, all){
-    std::map<WeaponType, std::vector<unsigned int>> x = readweapon("../config/weapons.conf");
-    std::vector<std::vector<unsigned int>> y = readbea("../config/beasts.conf");
+    auto x = getconf("../config/weapons.json");
+    auto y = getconf("../config/beasts.json");
  
     ForagerBeast b(y);
 
@@ -311,6 +301,7 @@ TEST(foragerbeast, all){
     ASSERT_TRUE(b.getStepTime() == 5);
 
     unsigned int l = b.getCurHealth();
+    std::cout << l << std::endl;
     b.recieveDamage(l-3);
     ASSERT_TRUE(b.getCurHealth() == 3);
     EXPECT_ANY_THROW(b.recieveDamage(100));
@@ -331,7 +322,7 @@ TEST(foragerbeast, all){
     ASSERT_TRUE(b.getCurTime() == b.getMaxTime());
 
 // items
-    Weapon pistol(WeaponType::pistol, x, 10);
+    Weapon pistol(x,WeaponType::pistol,  10);
     ASSERT_TRUE(b.getInventory().getCurCount() == 0);
     b.pickItem(&pistol, 3);
     ASSERT_FALSE(b.getInventory()[3] == nullptr);
@@ -345,10 +336,10 @@ TEST(foragerbeast, all){
 }
 
 TEST(level, fucc){
-    wconfig wep = readweapon("../config/weapons.conf");
-    opconfig op = readchar("../config/oper.conf");
-    bconfig be = readbea("../config/beasts.conf");
-    mapconfig ma = readmap("../config/map.conf");
+    auto wep = getconf("../config/weapons.json");
+    auto op = getconf("../config/oper.json");
+    auto be = getconf("../config/beasts.json");
+    auto ma = getconf("../config/map.json");
     Level lvl(ma, wep, op, be, 3);   
 
     // check for collisions

@@ -1,19 +1,25 @@
 // sarkoxed //
 #include "level.hpp"
+#include <stdexcept>
 
-Level::Level(const mapconfig& mconf, wconfig& wconf, opconfig& opconf, bconfig& bconf, unsigned int playernum){
-    if(playernum > mconf.first.first){
+Level::Level(nlohmann::json& mconf, nlohmann::json& wconf, nlohmann::json& opconf, nlohmann::json& bconf, unsigned int playernum){
+    if(playernum > mconf["width"]){
         throw std::invalid_argument("too much players, you need a bigger map");
     }
+    a_field.width = mconf["width"];
+    a_field.height = mconf["length"];
 
-    for(int i = 0; i < mconf.first.second; i++){
-        Vec<Cell> tmp(mconf.first.first);
-        for(int j = 0; j < mconf.first.first; j++){
+    for(int i = 0; i < mconf["length"]; i++){
+        Vec<Cell> tmp(mconf["width"]);
+        for(int j = 0; j < mconf["width"]; j++){
             Cell ttm;
-            ttm.a_type = mconf.second[i][j];
-            ttm.l_items = genRandomThings(wconf);
+            ttm.a_type = mconf["map"][i][j];
+
+            if(ttm.a_type != cellType::wall){
+                ttm.l_items = genRandomThings(wconf);
+            }
             ttm.p_player = nullptr;
-            tmp[j] = ttm;
+            tmp[j] = ttm;          
         }
         a_field.a_field.push_back(tmp);
     }
@@ -30,8 +36,8 @@ Level::Level(const mapconfig& mconf, wconfig& wconf, opconfig& opconf, bconfig& 
     for(int i = 0; i < playernum + (playernum / 2); i++){
         std::pair<unsigned int, unsigned int> r;
         while(true){
-            r.first = randint(mconf.first.second);
-            r.second = randint(mconf.first.first);
+            r.first = randint(mconf["length"]);
+            r.second = randint(mconf["width"]);
             if(a_field.a_field[r.first][r.second].a_type == cellType::floo && a_field.a_field[r.first][r.second].p_player == nullptr){
                 break;
             }
@@ -72,7 +78,7 @@ Level::~Level(){
 }
 
 
-std::list<Item*> genRandomThings(wconfig& wconf){
+std::list<Item*> genRandomThings(nlohmann::json& wconf){
     int x = randint(1000);
     int y = randint(1000);
     if(y < 500){
@@ -81,7 +87,7 @@ std::list<Item*> genRandomThings(wconfig& wconf){
     Item* m;
     if(x < 333){
         int l = randint(4);
-        m = new Weapon(static_cast<WeaponType>(l), wconf);
+        m = new Weapon(wconf, static_cast<WeaponType>(l));
     }
     else if(x >= 334 && x < 666){
         int he = randint(200);
@@ -101,72 +107,263 @@ std::list<Item*> genRandomThings(wconfig& wconf){
     return ans;
 }
 
+Level::Level(const nlohmann::json& js){
+    unsigned int width, height;
+    width = js["width"];
+    height = js["length"];
+    a_field.width = width;
+    a_field.height = height;
 
-
-mapconfig readmap(const std::string& filename){
-    std::ifstream fin;
-    fin.open(filename);
-    if(!fin.is_open()){
-        throw std::invalid_argument("no such a file");
-    }
-    std::pair<unsigned int, unsigned int> size;
-    std::vector<std::vector<cellType>> cells;
-    fin >> size.first;
-    fin >> size.second;
-    for(int i = 0; i < size.second; i++){
-        std::vector<cellType> cs;
-        for(int j = 0; j < size.first; j++){
-            unsigned int tm;
-            fin >> tm;
-            cs.push_back(static_cast<cellType>(tm));
+    unsigned int x0 = 0, y0 = 0;
+    for(auto i: js["map"]){
+        Vec<Cell> cells;
+        for(auto j: i){
+            Cell x;
+            x.a_type = static_cast<cellType>(j["type"]);
+            x.p_player = nullptr;
+            if(j.contains("items")){
+                for(auto it: j["items"]){
+                    ItemType type = static_cast<ItemType>(it["type"]);
+                    Item* tmp;
+                    if(type == ItemType::weapon){ 
+                        tmp = new Weapon(it, static_cast<WeaponType>(it["a_name"]));
+                    }
+                    else if(type == ItemType::medkit){
+                        tmp = new MedKit(it["increasing"], it["heltime"], it["a_weight"]); 
+                    }
+                    else{
+                        auto tp = static_cast<WeaponType>(it["a_name"]);
+                        tmp = new Bandolier(tp, it["a_cursize"], it["a_maxsize"], it["a_weight"]);
+                    }
+                    x.l_items.push_back(tmp);
+                }
+            }
+            if(j.contains("person")){
+                short type = j["person"]["type"];
+                std::pair<unsigned int, unsigned int> r(x0, y0);
+                if(type == 0){
+                    x.p_player = new OpAgent(j["person"]);
+                    l_players.push_back(std::pair<OpAgent*, std::pair<unsigned int, unsigned int>>(dynamic_cast<OpAgent*>(x.p_player), r));
+                }
+                else if(type == 1){
+                    x.p_player = new WildBeast(j["person"]);
+                    l_enemies.push_back(std::pair<Character*, std::pair<unsigned int, unsigned int>>(x.p_player, r));
+                }
+                else if(type == 2){
+                    x.p_player = new SmartBeast(j["person"]);
+                    l_enemies.push_back(std::pair<Character*, std::pair<unsigned int, unsigned int>>(x.p_player, r));
+                }
+                else if(type == 3){
+                    x.p_player = new ForagerBeast(j["person"]);
+                    l_enemies.push_back(std::pair<Character*, std::pair<unsigned int, unsigned int>>(x.p_player, r));
+                }
+            }
+            cells.pushBack(x);            
+            x0++;
         }
-        cells.push_back(cs);
+        a_field.a_field.push_back(cells);
+        
+        y0++;
     }
-    return mapconfig(size, cells); 
 }
 
-//lvlconfig readlvl(const std::string& filename){
-//    lvlconfig ans;
-//
-//    std::ifstream fin;
-//    fin.open(filename);
-//    if(!fin.is_open()){
-//        throw std::invalid_argument("no such a file");
-//    }
-//
-//    // map 
-//    fin >> ans.lvl.second.first;
-//    fin >> ans.lvl.second.second;
-//    for(int i = 0; i < ans.lvl.second.first; i++){
-//        std::vector<unsigned int> tmp;
-//        for(int j = 0; j < ans.lvl.second.second; j++){
-//            unsigned int a;
-//            fin >> a;
-//            tmp.push_back(a);
-//        }
-//        ans.lvl.first.push_back(tmp);
-//    }
-//
-//    // characters
-//    unsigned int n;
-//    fin >> n;
-//    for(int i = 0; i < n; i++){
-//        unsigned int type;
-//        if()
-//    }
-//
-//
-//    // items 
-//    
-//
-//
-//    // charitems 
-//    
-//
-//    return lvlconfig;
-//    
-//}
+nlohmann::json getJsonOfItems(OpAgent* agent){
+    nlohmann::json items;
+    std::vector<nlohmann::json> inventory;
+    for(auto k: *(agent)->getInventory().getTable()){
+        nlohmann::json tmp2;
+        if(k.second->isWeapon()){
+            auto wep = dynamic_cast<Weapon*>(k.second);
+            tmp2 = {
+                {"type", 0},
+                {"a_name", static_cast<short>(wep->getName())},
+                {"a_damage", wep->getDamage()},
+                {"a_tshoot", wep->getShootTime()},
+                {"a_treload", wep->getRelTime()},
+                {"a_fullmag", wep->getFullAmmo()},
+                {"a_curmag", wep->getCurrentAmmo()},
+                {"a_weight", wep->getWeight()},
+                {"num", k.first}
+            };
+        }
+        else if(k.second->isMedkit()){
+            auto med = dynamic_cast<MedKit*>(k.second);
+            tmp2 = {
+                {"type", 1},
+                {"increasing", med->getIncHealth()},
+                {"heltime", med->getHealTime()},
+                {"a_weight", med->getWeight()},
+                {"num", k.first}
+            };
+        }
+        else{
+            auto band = dynamic_cast<Bandolier*>(k.second);
+            tmp2 = {
+                {"type", 2},
+                {"a_weight", band->getWeight()},
+                {"a_maxsize", band->getMaxSize()},
+                {"a_cursize", band->getCurSize()},
+                {"a_name", band->getType()},
+                {"num", k.first}
+            };
+        }
+        inventory.push_back(tmp2);
+    }
+    items["inventory"] = inventory;
+    
+    if(agent->getHand()){
+        auto wep = dynamic_cast<Weapon*>(agent->getHand());
+        items["hands"] = {
+            {"type", 0},
+            {"a_name", static_cast<short>(wep->getName())},
+            {"a_damage", wep->getDamage()},
+            {"a_tshoot", wep->getShootTime()},
+            {"a_treload", wep->getRelTime()},
+            {"a_fullmag", wep->getFullAmmo()},
+            {"a_curmag", wep->getCurrentAmmo()},
+            {"a_weight", wep->getWeight()}
+        };
+    }
+    return items;
+}
 
+void Level::save(const std::string& filename){
+    nlohmann::json save, map;
+    save["width"] = a_field.width;
+    save["length"] = a_field.height;
+    save["map"] = std::vector<std::vector<nlohmann::json>>();
+    for(auto i: a_field.a_field){
+        std::vector<nlohmann::json> lines = std::vector<nlohmann::json>();
+
+        for(auto j: i){
+            nlohmann::json cell;
+
+            cell["items"] = std::vector<nlohmann::json>();
+            cell["type"] = static_cast<short>(j.a_type);
+
+            for(auto k: j.l_items){
+                nlohmann::json cellitems;
+                if(k->isWeapon()){
+                    auto wep = dynamic_cast<Weapon*>(k);
+                    cellitems["type"] = 0;
+                    cellitems["a_name"] = static_cast<short>(wep->getName());
+                    cellitems["a_damage"] = wep->getDamage();
+                    cellitems["a_tshoot"] = wep->getShootTime();
+                    cellitems["a_treload"] = wep->getRelTime();
+                    cellitems["a_fullmag"] = wep->getFullAmmo();
+                    cellitems["a_curmag"] = wep->getCurrentAmmo();
+                    cellitems["a_weight"] = wep->getWeight();
+                }
+                else if(k->isMedkit()){
+                    auto med = dynamic_cast<MedKit*>(k);
+                    cellitems["type"] = 1;
+                    cellitems["increasing"] = med->getIncHealth();
+                    cellitems["heltime"] = med->getHealTime();
+                    cellitems["a_weight"] = med->getWeight();
+                }
+                else{
+                    auto bond = dynamic_cast<Bandolier*>(k);
+                    cellitems["type"] = 2;
+                    cellitems["a_weight"] = bond->getWeight();
+                    cellitems["a_maxsize"] = bond->getMaxSize();
+                    cellitems["a_cursize"] = bond->getCurSize();
+                    cellitems["a_name"] = bond->getType();
+                }
+                cell["items"].push_back(cellitems);
+            }
+
+            nlohmann::json person;
+            if(j.p_player){
+                auto piri = j.p_player;
+                person = {
+                    {"a_maxhealth", {piri->getMaxHealth()}},
+                    {"a_curhealth", {piri->getCurHealth()}},
+                    {"a_maxtime",   {piri->getMaxTime()}},
+                    {"a_curtime",   {piri->getCurTime()}},
+                    {"a_radius",    {piri->getRadius()}},
+                    {"a_steptime",  {piri->getStepTime()}},
+                    {"a_accuracy",  {piri->getAccuracy()}}                        
+                };
+
+                if(piri->isTrooper()){
+                    auto trooper = dynamic_cast<OpAgent*>(piri);
+                    person["type"]  = 0;
+                    person["a_name"] = {trooper->getName()};
+                    person["a_strength"] = {trooper->getStrength()};
+                    person["a_reloadtime"] = {trooper->getRelTime()};
+                    person["a_curweight"] = {trooper->getCurWeight()};
+
+                    person["items"] = getJsonOfItems(trooper);
+                }
+                else if(j.p_player->isWild()){
+                    person["type"] = 1;
+                    person["a_damage"] = {dynamic_cast<WildBeast*>(j.p_player)->getDamage()};
+                }
+                else if(j.p_player->isForager()){
+                    person["type"] = 3;
+                    person["a_strength"] = {dynamic_cast<ForagerBeast*>(j.p_player)->getStrenght()};
+                }
+                else{
+                    person["type"] = 2;
+                }
+
+                
+                if(j.p_player->isSmart()){
+                    auto smart = dynamic_cast<SmartBeast*>(j.p_player);
+                    if(smart->getHand()){
+                        auto hand = dynamic_cast<Weapon*>(smart->getHand());
+                        person["items"]["hands"]["type"] = 0;
+                        person["items"]["hands"]["a_name"] = static_cast<short>(hand->getName());
+                        person["items"]["hands"]["a_damage"] = hand->getDamage();
+                        person["items"]["hands"]["a_tshoot"] = hand->getShootTime();
+                        person["items"]["hands"]["a_treload"] = hand->getRelTime();
+                        person["items"]["hands"]["a_fullmag"] = hand->getFullAmmo();
+                        person["items"]["hands"]["a_curmag"] = hand->getCurrentAmmo();
+                        person["items"]["hands"]["a_weight"] = hand->getWeight();         
+                    }
+                }
+
+                if(j.p_player->isForager()){
+                    person["items"] = std::vector<nlohmann::json>();
+                    for(auto k: *(dynamic_cast<ForagerBeast*>(j.p_player))->getInventory().getTable()){
+                        nlohmann::json foreageritems;
+                        if(k.second->isWeapon()){
+                            auto wep = dynamic_cast<Weapon*>(k.second);
+                            foreageritems["type"] = 0;
+                            foreageritems["a_name"] = static_cast<short>(wep->getName());
+                            foreageritems["a_damage"] = wep->getDamage();
+                            foreageritems["a_tshoot"] = wep->getShootTime();
+                            foreageritems["a_treload"] = wep->getRelTime();
+                            foreageritems["a_fullmag"] = wep->getFullAmmo();
+                            foreageritems["a_curmag"] = wep->getCurrentAmmo();
+                            foreageritems["a_weight"] = wep->getWeight();
+                        }
+                        else if(k.second->isMedkit()){
+                            auto med = dynamic_cast<MedKit*>(k.second);
+                            foreageritems["type"] = 1;
+                            foreageritems["increasing"] = med->getIncHealth();
+                            foreageritems["heltime"] = med->getHealTime();
+                            foreageritems["a_weight"] = med->getWeight();
+                        }
+                        else{
+                            auto bond = dynamic_cast<Bandolier*>(k.second);
+                            foreageritems["type"] = 2;
+                            foreageritems["a_weight"] = bond->getWeight();
+                            foreageritems["a_maxsize"] = bond->getMaxSize();
+                            foreageritems["a_cursize"] = bond->getCurSize();
+                            foreageritems["a_name"] = bond->getType();
+                        }
+                        person["items"].push_back(foreageritems);
+                    }
+                }
+                cell["person"] = person;
+            }
+            lines.push_back(cell);
+        }
+        save["map"].push_back(lines);
+    }
+    saveconf(save, filename);
+}
 
 std::ostream& operator<<(std::ostream& out, const Level& x){
     std::string str(" #^-");
@@ -223,7 +420,7 @@ std::ostream& operator<<(std::ostream& out, const Level& x){
             else if(j.l_items.size() == 0){
                 out << "   ";
             }
-            else if(j.l_items.front()->isAmmo()){
+            else if(j.l_items.front()->isWeapon()){
                 out << "A  ";
             }
             else if(j.l_items.front()->isMedkit()){
@@ -268,10 +465,56 @@ void Level::changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned
 
 
 
-void attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
-void pickItem(unsigned int x, unsigned int y, unsigned int num);
-void Level::throwItem(unsigned int x, unsigned int y){
-    //Item* r = a_field.a_field[x][y].p_player->throwItem();
-    //a_field.a_field[x][y].l_items.push_back(r);
+void Level::attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1){
+    Character* a = a_field.a_field[x][y].p_player;
+    Character* b = a_field.a_field[x1][y1].p_player;
+    if((a->isTrooper() && b->isTrooper()) || (a->isBeast() && b->isBeast())){
+        throw std::invalid_argument("friendly fire");
+    }
+    unsigned int dist = floor(sqrt(pow(x-x1, 2) + pow(y-y1,2)));
+    if(dist > a->getRadius()){
+        throw std::invalid_argument("this might not happen");
+    }
+
+
+    unsigned int res;
+    if(a->isTrooper()){
+        res = dynamic_cast<OpAgent*>(a)->shoot(dist);
+    }
+    else if(a->isSmart()){
+        res = dynamic_cast<SmartBeast*>(a)->shoot(dist);
+    }
+    else if(a->isWild()){
+        res = dynamic_cast<WildBeast*>(a)->getDamage();
+    }
+    else{ 
+        throw std::invalid_argument("not an attackable");
+    }
+    b->recieveDamage(res);
 }
-void save(const std::string& filename);
+
+
+void Level::pickItem(unsigned int x, unsigned int y, unsigned int num, Item* it){
+    Character* p = a_field.a_field[x][y].p_player;
+    if(p->isWild()){
+        throw std::invalid_argument("not a pickable");
+    }
+    else if(p->isSmart()){
+        dynamic_cast<SmartBeast*>(p)->takeItem(dynamic_cast<Weapon*>(it));
+        return;
+    }
+    else if(p->isTrooper()){
+        dynamic_cast<OpAgent*>(p)->pickItem(it, num);
+    }
+    else{
+        dynamic_cast<ForagerBeast*>(p)->pickItem(it, num);
+    }
+}
+
+void Level::throwItem(unsigned int x, unsigned int y, Item* it){
+    a_field.a_field[x][y].l_items.push_back(it);
+}
+
+
+
+

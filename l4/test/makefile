@@ -35,6 +35,8 @@ GTEST_INCLUDE2=../googletest/googletest/include/gtest
 # Taken from https://gist.github.com/mihaitodor/bfb8e7ad908489fdf3ceb496573f306a
 #
 #.PHONY: tests/gtest-all.o tests/gtest_main.o tests/gtest_main.a tests/test.o
+TEST_SOURCE = tesrc/**/*.cpp
+
 
 .PHONY: test
 test: innanan
@@ -45,7 +47,7 @@ test: innanan
 #test.o: $(TEST_DIR)/test.cpp $(GTEST_HEADERS)
 #	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c $(TEST_DIR)/test.cpp $(ASANFLAGS) -o tests/test.o
 innanan: tests/test.o tests/gtest_main.a
-	$(CXX) $(CXXFLAGS) $(ASANFLAGS) $(DEBUGFLAGS) -lpthread $^  tesrc/**/*.cpp  tools/toolib.cpp -o $@
+	$(CXX) $(CXXFLAGS) $(ASANFLAGS) $(DEBUGFLAGS) -lpthread $^  $(TEST_SOURCE)  tools/toolib.cpp -o $@
 	
 tests/gtest-all.o: gtest-all.o
 gtest-all.o: $(GTEST_SRCS_)
