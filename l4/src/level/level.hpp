@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <list>
+#include <cmath>
 
 #include "../character/oper.hpp"
 #include "../character/beasts.hpp"
@@ -26,26 +27,15 @@ struct Field{
     unsigned int height;
 };
 
-typedef std::pair<std::pair<unsigned int, unsigned int>, std::vector<std::vector<cellType>>> mapconfig;
-
-typedef std::vector<std::pair<std::vector<unsigned int>, std::pair<unsigned int, unsigned int>>> conftype;
-
-typedef std::pair<std::vector<std::vector<unsigned int>>, std::pair<unsigned int, unsigned int>> lvlmapconfig;
-
-struct lvlconfig{
-    lvlmapconfig lvl;
-    conftype chars;
-    conftype items;
-    conftype charitems;
-};
-
 class Level{
     private:
         Field a_field;
         std::list<std::pair<OpAgent*, std::pair<unsigned int, unsigned int>>> l_players;
         std::list<std::pair<Character*, std::pair<unsigned int, unsigned int>>> l_enemies;
     public:
-        explicit Level(const mapconfig& mconf, wconfig& wconf, opconfig& opconf, bconfig& bconf, unsigned int playernum);
+        explicit Level(const nlohmann::json& js);
+        explicit Level(nlohmann::json& mconf, nlohmann::json& wconf, nlohmann::json& opconf, nlohmann::json& bconf, unsigned int playernum);
+
 
         std::pair<unsigned int, unsigned int> getSize() const { return std::pair<unsigned int, unsigned int>(a_field.width, a_field.height);}
 
@@ -66,16 +56,17 @@ class Level{
         void destroy(unsigned int x, unsigned int y);
         void attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
         void changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
-        void pickItem(unsigned int x, unsigned int y, unsigned int num);
-        void throwItem(unsigned int x, unsigned int y);
+        void pickItem(unsigned int x, unsigned int y, unsigned int num, Item* it);
+        void throwItem(unsigned int x, unsigned int y, Item* it);
 
         void save(const std::string& filename);
-
+        
+        friend class Game;
         ~Level();  
 
         friend std::ostream& operator<<(std::ostream& out, const Level& x);
 };
 
-mapconfig readmap(const std::string& filename);
-std::list<Item*> genRandomThings(wconfig& wconf);
-lvlconfig readlvl(const std::string& filename);
+std::list<Item*> genRandomThings(nlohmann::json& wconf);
+nlohmann::json mapmap(const nlohmann::json& js);
+nlohmann::json getJsonOfItems(OpAgent* agent);
