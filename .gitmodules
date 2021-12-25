@@ -4,3 +4,6 @@
 [submodule "SFML"]
 	path = SFML
 	url = git@github.com:SFML/SFML.git
+[submodule "json"]
+	path = json
+	url = git@github.com:nlohmann/json.git
