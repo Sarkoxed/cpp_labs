@@ -13,7 +13,7 @@ class Weapon: public Item{
         unsigned int a_mag;
         unsigned int a_fullmag;
     public:
-        explicit Weapon(WeaponType t,wconfig& config, unsigned int curmag = 0);
+        explicit Weapon(nlohmann::json& js, WeaponType x = WeaponType::pistol, unsigned int curmag = 0);
         explicit Weapon(const Weapon& vx) = default;
         explicit Weapon(Weapon&& x) = default;
 
@@ -33,11 +33,9 @@ class Weapon: public Item{
         const bool getShotResult(unsigned int dist, unsigned int accuracy, unsigned int radius);
         void reload(unsigned int& ammo, unsigned int& time);
 
-        const bool isWeapon() const{ return true; }
-        const bool isMedkit() const{ return false; }
-        const bool isAmmo() const{ return false; }
+        const bool isWeapon() const override{ return true; }
+        const bool isMedkit() const override{ return false; }
+        const bool isAmmo() const override{ return false; }
 
         ~Weapon() = default;
 };
-
-wconfig readweapon(std::string filename);
