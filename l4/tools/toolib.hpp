@@ -1,8 +1,12 @@
+#pragma once 
+
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <limits>
 #include <random>
-#pragma once 
+
+#include "../../json/single_include/nlohmann/json.hpp" 
 
 template <typename T>
 void getEl(T& x, std::istream& in = std::cin, std::ostream& err= std::cerr){
@@ -29,8 +33,6 @@ void getEl(T& x, std::istream& in = std::cin, std::ostream& err= std::cerr){
     }while(!valid);
 }
 
-unsigned int randint(unsigned int a);
-   
 template <typename T>
 std::ostream&operator<<(std::ostream& out,const std::vector<T> &x){
     for(auto i: x){
@@ -40,3 +42,6 @@ std::ostream&operator<<(std::ostream& out,const std::vector<T> &x){
     return out;
 }
 
+unsigned int randint(unsigned int a);
+nlohmann::json getconf(const std::string& filename);
+void saveconf(const nlohmann::json& js, const std::string& filename);
