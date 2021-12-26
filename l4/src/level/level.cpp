@@ -451,16 +451,18 @@ void Level::destroy(unsigned int x, unsigned int y){
 
 
 void Level::changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1){
-    if(a_field.a_field[x1][y1].p_player == nullptr){
-        std::swap(a_field.a_field[x1][y1].p_player,a_field.a_field[x][y].p_player);
-        for(auto i: l_players){
-            if(i.second.first == x && i.second.second == y){
-                i.second = std::pair<unsigned int, unsigned int>(x1, y1);
-            }
-        }
-        return;
+    auto tp = a_field.a_field[x1][y1].a_type;
+
+    if((tp != cellType::glass && tp != cellType::storage) || a_field.a_field[x1][y1].p_player != nullptr){
+        throw std::invalid_argument("YOU SHALL NOT PASS");
     }
-    throw std::out_of_range("YOU SHALL NOT PASS");
+
+    std::swap(a_field.a_field[x1][y1].p_player,a_field.a_field[x][y].p_player);
+    for(auto i: l_players){
+        if(i.second.first == x && i.second.second == y){
+            i.second = std::pair<unsigned int, unsigned int>(x1, y1);
+        }
+    }
 }
 
 
