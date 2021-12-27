@@ -140,7 +140,7 @@ Level::Level(const nlohmann::json& js){
             }
             if(j.contains("person")){
                 short type = j["person"]["type"];
-                std::pair<unsigned int, unsigned int> r(x0, y0);
+                std::pair<unsigned int, unsigned int> r(y0, x0);
                 if(type == 0){
                     x.p_player = new OpAgent(j["person"]);
                     l_players.push_back(std::pair<OpAgent*, std::pair<unsigned int, unsigned int>>(dynamic_cast<OpAgent*>(x.p_player), r));
@@ -162,7 +162,7 @@ Level::Level(const nlohmann::json& js){
             x0++;
         }
         a_field.a_field.push_back(cells);
-        
+        x0 = 0; 
         y0++;
     }
 }
@@ -396,17 +396,17 @@ std::ostream& operator<<(std::ostream& out, const Level& x){
                 out << "   ";
             }
             else if(j.p_player->isTrooper()){
-                out << " O ";
+                out << " \033[1;32mO\033[0m ";
             }
             else if(j.p_player->isBeast()){
                 if(j.p_player->isWild()){
-                    out << " W ";
+                    out << " \033[1;31mW\033[0m ";
                 }
                 else if(j.p_player->isSmart()){
-                    out << " S ";
+                    out << " \033[1;31mS\033[0m ";
                 }
                 else{
-                    out << " F ";    
+                    out << " \033[1;31mF\033[0m ";
                 }
             }
         }
@@ -451,16 +451,32 @@ void Level::destroy(unsigned int x, unsigned int y){
 
 
 void Level::changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1){
+    
+    if(y1 >= a_field.width || x1 >= a_field.height || y1 < 0 || x1 < 0){
+        throw std::out_of_range("no way here");
+    }
     auto tp = a_field.a_field[x1][y1].a_type;
-
-    if((tp != cellType::glass && tp != cellType::storage) || a_field.a_field[x1][y1].p_player != nullptr){
+    if((tp != cellType::floo && tp != cellType::storage) || a_field.a_field[x1][y1].p_player != nullptr ){
         throw std::invalid_argument("YOU SHALL NOT PASS");
     }
 
-    std::swap(a_field.a_field[x1][y1].p_player,a_field.a_field[x][y].p_player);
-    for(auto i: l_players){
-        if(i.second.first == x && i.second.second == y){
-            i.second = std::pair<unsigned int, unsigned int>(x1, y1);
+    a_field.a_field[x][y].p_player->makeStep();
+    a_field.a_field[x1][y1].p_player = a_field.a_field[x][y].p_player;
+    a_field.a_field[x][y].p_player = nullptr;
+    if(a_field.a_field[x1][y1].p_player->isTrooper()){
+        for(auto i = l_players.begin(); i != l_players.end(); ++i){
+            if(i->second.first == x && i->second.second == y){
+                i->second = std::pair<unsigned int, unsigned int>(x1, y1);
+                break;
+            }
+        }
+    }
+    else{
+        for(auto i = l_enemies.begin(); i != l_enemies.end(); ++i){
+            if(i->second.first == x && i->second.second == y){
+                i->second = std::pair<unsigned int, unsigned int>(x1, y1);
+                break;
+            }
         }
     }
 }
@@ -468,22 +484,38 @@ void Level::changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned
 
 
 void Level::attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1){
+    bool flag = false;
     Character* a = a_field.a_field[x][y].p_player;
     Character* b = a_field.a_field[x1][y1].p_player;
-    if((a->isTrooper() && b->isTrooper()) || (a->isBeast() && b->isBeast())){
+    if(a == nullptr || b == nullptr){
+        auto tp = a_field.a_field[x1][y1].a_type;
+        if(tp == cellType::baffle || tp == cellType::glass){
+            flag = true;
+        }
+    }
+    else if((a->isTrooper() && b->isTrooper()) || (a->isBeast() && b->isBeast())){
         throw std::invalid_argument("friendly fire");
     }
-    unsigned int dist = floor(sqrt(pow(x-x1, 2) + pow(y-y1,2)));
+
+    double di = pow(static_cast<int>(x-x1), 2) + pow(static_cast<int>(y-y1),2);
+    di = sqrt(di);
+    unsigned int dist = floor(di);
+
     if(dist > a->getRadius()){
         throw std::invalid_argument("this might not happen");
     }
 
-
     unsigned int res;
     if(a->isTrooper()){
+        if(!dynamic_cast<OpAgent*>(a)->getHand()){
+            throw std::invalid_argument("no weapon");
+        }
         res = dynamic_cast<OpAgent*>(a)->shoot(dist);
     }
     else if(a->isSmart()){
+        if(!dynamic_cast<SmartBeast*>(a)->getHand()){
+            throw std::invalid_argument("no weapon");
+        }
         res = dynamic_cast<SmartBeast*>(a)->shoot(dist);
     }
     else if(a->isWild()){
@@ -491,6 +523,13 @@ void Level::attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int
     }
     else{ 
         throw std::invalid_argument("not an attackable");
+    }
+    if(flag){
+        destroy(x1, y1);
+        return;
+    }
+    else if(b == nullptr){
+        return;
     }
     b->recieveDamage(res);
 }

@@ -33,3 +33,14 @@ void Character::decTime(unsigned int t){
     }
     a_curtime -= t;
 }
+
+std::ostream& operator<<(std::ostream& out, Character& x){
+    out << "cH" <<  x.a_curhealth  << std::endl;
+    out << "mH" << x.a_maxhealth << std::endl;
+    out << "ct" << x.a_curtime << std::endl;
+    out << "mt" << x.a_maxtime << std::endl;
+    out << "st" << x.a_steptime << std::endl;
+    out << "ra" << x.a_radius << std::endl;
+    out << "ac" << x.a_accuracy << std::endl;
+    return out;
+}

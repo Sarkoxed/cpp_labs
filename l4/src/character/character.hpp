@@ -37,6 +37,7 @@ class Character{
         virtual const bool isForager() const { return false;};
 
         virtual ~Character() = default;
+        friend std::ostream& operator<<(std::ostream& out, Character& x);
 };
 
 

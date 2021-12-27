@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <cmath>
+#include <stdlib.h>
 
 #include "../character/oper.hpp"
 #include "../character/beasts.hpp"
@@ -46,12 +47,13 @@ class Level{
 
         void addItemToCell(unsigned int x, unsigned int y, Item* item);
         Item* getItemFromCell(unsigned int x, unsigned int y);
+        std::list<std::pair<OpAgent*, std::pair<unsigned int, unsigned int>>>& getPlayers(){return l_players;}
+        std::list<std::pair<Character*, std::pair<unsigned int, unsigned int>>>& getEnemies(){return l_enemies;}
 
+        Field& getField(){return a_field;}
+ 
         unsigned int getOpCount(){return l_players.size();};
         unsigned int getBeCount(){return l_enemies.size();};
-
-        Field& getField(){return a_field;};
-
         
         void destroy(unsigned int x, unsigned int y);
         void attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
