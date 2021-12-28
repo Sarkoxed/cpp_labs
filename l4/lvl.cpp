@@ -5,20 +5,20 @@
 
 
 int main(){
- //   srand(time(0));
- //   auto wep = getconf("config/weapons.json");
- //   auto op = getconf("config/oper.json");
- //   auto be = getconf("config/beasts.json");
- //   auto ma = getconf("config/map.json");
+    srand(time(0));
+   // auto wep = getconf("config/weapons.json");
+   // auto op = getconf("config/oper.json");
+   // auto be = getconf("config/beasts.json");
+   // auto ma = getconf("config/map1.json");
 
- //   Level lvl(ma, wep, op, be, 3);
+   // Level lvl(ma, wep, op, be, 3);
  
-    std::string ccccc;
-    std::cin >> ccccc;
-    nlohmann::json cc = getconf(ccccc);
-    Level lvl(cc);
+   std::string ccccc;
+   std::cin >> ccccc;
+   nlohmann::json cc = getconf(ccccc);
+   Level lvl(cc);
     std::cout << lvl;
-   // lvl.save("kuka2");
+    lvl.save("kuka");
 
     Game g(lvl);
     while(true){
