@@ -14,8 +14,7 @@ class MedKit: public Item{
 
         explicit MedKit(const MedKit& mx) = default; 
         explicit MedKit(MedKit&& mx) = default;
-
-        MedKit& operator=(const MedKit& rx) = default;
+MedKit& operator=(const MedKit& rx) = default;
         MedKit& operator=(MedKit&& rx) = default;
 
 
@@ -24,10 +23,18 @@ class MedKit: public Item{
         
         void decHeal(unsigned int& curHeal, unsigned int maxHealth);
 
-        const bool isWeapon() const{ return false; }
-        const bool isMedkit() const{ return true; }
-        const bool isAmmo() const{ return false; }
+        const bool isWeapon() const override{ return false; }
+        const bool isMedkit() const override{  return true; }
+        const bool isAmmo() const override{ return false; }
 
+        explicit operator std::string() const override{
+            std::string ans;
+            ans += "MedKit";
+            ans += " Weight: " + std::to_string(a_weight);
+            ans += " Inc: " + std::to_string(a_inchealth);
+            ans += " Time: " + std::to_string(a_healthtime);
+            return ans;
+        }
         ~MedKit() = default;
 
 };

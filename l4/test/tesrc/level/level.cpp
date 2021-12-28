@@ -172,6 +172,9 @@ nlohmann::json getJsonOfItems(OpAgent* agent){
     std::vector<nlohmann::json> inventory;
     for(auto k: *(agent)->getInventory().getTable()){
         nlohmann::json tmp2;
+        if(k.second == nullptr){
+            continue;
+        }
         if(k.second->isWeapon()){
             auto wep = dynamic_cast<Weapon*>(k.second);
             tmp2 = {
@@ -537,12 +540,11 @@ void Level::attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int
 
 void Level::pickItem(unsigned int x, unsigned int y, unsigned int num, Item* it){
     Character* p = a_field.a_field[x][y].p_player;
-    if(p->isWild()){
+    if(p->isWild() || p->isSmart()){
         throw std::invalid_argument("not a pickable");
     }
     else if(p->isSmart()){
         dynamic_cast<SmartBeast*>(p)->takeItem(dynamic_cast<Weapon*>(it));
-        return;
     }
     else if(p->isTrooper()){
         dynamic_cast<OpAgent*>(p)->pickItem(it, num);
@@ -551,11 +553,93 @@ void Level::pickItem(unsigned int x, unsigned int y, unsigned int num, Item* it)
         dynamic_cast<ForagerBeast*>(p)->pickItem(it, num);
     }
 }
+//
+//void Level::pickHand(unsigned int x, unsigned int y, unsigned int num){
+//   auto p = a_field.a_field[x][y].p_player;
+//   if(p->isBeast()){
+//       throw std::invalid_argument("not an option");
+//   }
+//   auto r = dynamic_cast<OpAgent*>(p);
+//   r->pickItemToHold(r->getInventory().extract(num));
+//}
 
-void Level::throwItem(unsigned int x, unsigned int y, Item* it){
+void Level::handToInv(unsigned int x, unsigned int y, unsigned int  num){
+    auto p = a_field.a_field[x][y].p_player;
+    if(p->isBeast()){
+        throw std::invalid_argument("not an option");
+    }
+
+    auto r = dynamic_cast<OpAgent*>(p);
+    r->getInventory().add(num, r->throwHand());
+}
+
+void Level::throwItem(unsigned int x, unsigned int y,unsigned int num){
+    auto p = a_field.a_field[x][y].p_player;
+    if(p->isWild() || p->isSmart()){
+        throw std::invalid_argument("not an option");
+    }
+    if(p->isTrooper()){
+        a_field.a_field[x][y].l_items.push_back(dynamic_cast<OpAgent*>(p)->getInventory().extract(num));
+    }
+    else{
+        a_field.a_field[x][y].l_items.push_back(dynamic_cast<ForagerBeast*>(p)->getInventory().extract(num));
+    }
+}
+void Level::throwItem(unsigned int x, unsigned int y,Item* it){
+    auto p = a_field.a_field[x][y].p_player;
+    if(p->isWild() || p->isSmart()){
+        throw std::invalid_argument("not an option");
+    }
     a_field.a_field[x][y].l_items.push_back(it);
 }
 
 
+void Level::throwHand(unsigned int x, unsigned int y){
+    auto p = a_field.a_field[x][y].p_player;
+    if(p->isForager() || p->isWild()){
+        throw std::invalid_argument("not an option");
+    }
+    if(p->isTrooper()){
+        auto tmp = dynamic_cast<OpAgent*>(p)->throwHand();
+        if(tmp){
+            a_field.a_field[x][y].l_items.push_back(tmp);
+        }
+    }
+    else{
+        auto tmp = dynamic_cast<SmartBeast*>(p)->throwItem();
+        if(tmp){
+            a_field.a_field[x][y].l_items.push_back(tmp);
+        }
+    }
+}
 
+std::vector<std::string> Level::getInv(unsigned int x, unsigned int y)const{
+    auto p = a_field.a_field[x][y].p_player;
+    if(!p){
+        throw std::invalid_argument("noone here");
+    }
+    if(p->isSmart() || p->isWild()){
+        throw std::invalid_argument("no inventory");
+    }
+    std::vector<std::string> ans;
+    if(p->isTrooper()){
+        return dynamic_cast<OpAgent*>(p)->getInventory().toString();
+    }
+    else{
+        return dynamic_cast<ForagerBeast*>(p)->getInventory().toString();
+    }
+    return ans;
+}
 
+std::vector<std::string> Level::getIt(unsigned int x, unsigned int y)const{
+    auto p = a_field.a_field[x][y].p_player;
+    std::vector<std::string> ans;
+    for(auto i: a_field.a_field[x][y].l_items){
+        ans.push_back(std::string(*i));
+    }
+    return ans;
+}
+
+//bool Level::visioble(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1){
+
+//}

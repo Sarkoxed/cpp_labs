@@ -37,5 +37,33 @@ class Weapon: public Item{
         const bool isMedkit() const override{ return false; }
         const bool isAmmo() const override{ return false; }
 
+        explicit operator std::string() const override{
+            std::string ans;
+            switch(a_name){
+                case WeaponType::pistol:
+                    ans += "pistol ";
+                    break;
+                case WeaponType::grenade:
+                    ans += "grenade ";
+                    break;
+                case WeaponType::canon:
+                    ans+= "canon";
+                    break;
+                case WeaponType::rifle:
+                    ans+="rifle ";
+                    break;
+                case WeaponType::shotgun:
+                    ans+="shotgun ";
+                    break;
+            }
+
+            ans+= "Weight: " + std::to_string(a_weight);
+            ans+= " Damage: " + std::to_string(a_damage);
+            ans+= " Time: " + std::to_string(a_tshoot);
+            ans+= " Treload: " + std::to_string(a_treload);
+            ans+= " Ammo: " + std::to_string(a_mag) + " // " + std::to_string(a_fullmag);
+            return ans;
+        }
+
         ~Weapon() = default;
 };
