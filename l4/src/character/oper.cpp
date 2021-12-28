@@ -28,13 +28,14 @@ OpAgent::OpAgent(nlohmann::json& js){
     }
     catch(const std::exception& e){
         a_reloadtime = 0;
-    }
-    try{
-        a_curweight  = js["a_curweight"][num];
-    }
-    catch(const std::exception& e){
-        a_curweight = 0;
-    }
+    } 
+    a_curweight = 0;
+    //try{
+    //    a_curweight  = js["a_curweight"][num];
+    //}
+    //catch(const std::exception& e){
+    //    a_curweight = 0;
+    //}
     a_hands = nullptr;
     a_inventory = Inventory(0, a_strength, 0);
     if(js.contains("items")){
@@ -50,8 +51,11 @@ OpAgent::OpAgent(nlohmann::json& js){
                     tmp = new MedKit(it["increasing"], it["heltime"], it["a_weight"]);
                 }
                 else{
-                    auto type = static_cast<WeaponType>(it["a_name"]);
-                    tmp = new Bandolier(type, it["a_curs      ize"], it["a_maxsize"], it["a_weight"]);
+                    auto type1 = static_cast<WeaponType>(it["a_name"]);
+                    unsigned int sss = it["a_cursize"];
+                    unsigned int aaa = it["a_maxsize"];
+                    unsigned int bbb = it["a_weight"];
+                    tmp = new Bandolier(type1, sss, aaa, bbb);
                 }
                 pickItem(tmp, it["num"]);
             }
@@ -104,15 +108,23 @@ void OpAgent::pickItem(Item* item, unsigned int num){
     else if(a_curweight + item->getWeight() > a_strength){
         throw std::out_of_range("not enough stamina");
     }
+    if(num == 0){
+        auto tmp = pickItemToHold(item);
+        return;
+    }
     a_inventory.add(num, item);
     a_curweight += item->getWeight(); 
 }
 
 Item* OpAgent::pickItemToHold(Item *item){
+    if(a_hands){
+        throw std::invalid_argument("already a hand");
+    }
     if(item->isWeapon()){
         Weapon* w = dynamic_cast<Weapon*>(item);
         Item* tmp = a_hands;
         a_hands = w;
+        a_curweight += w->getWeight();
         a_reloadtime = w->getRelTime();
         return tmp;
     }
@@ -128,6 +140,8 @@ Item* OpAgent::throwItem(unsigned int num){
     }
     Item* tmp = a_inventory.extract(num);
     a_curweight -= tmp->getWeight();
+    std::cout << a_curweight << std::endl;
+    std::cout << tmp->getWeight() << std::endl; 
     return tmp;
 }
 
@@ -160,39 +174,3 @@ unsigned int OpAgent::shoot(unsigned int dist){
     return 0;
 }
 
-//opconfig readchar(const std::string& filename){
-//    std::ifstream fin;
-//    fin.open(filename);
-//    if(!fin.is_open()){
-//        throw std::invalid_argument("no such a file");
-//    }
-//    
-//    std::vector<std::vector<unsigned int>> cha;
-//    int count;
-//    fin >> count;
-//    
-//    std::vector<std::string> names;
-//    std::string name;
-//    for(int i = 0; i < count; i++){
-//        fin >> name;
-//        names.push_back(name);
-//    }
-//
-//    while(!fin.eof()){
-//        try{
-//            unsigned int val;
-//            fin >> name;
-//            std::vector<unsigned int> vals;
-//            for(int i = 0; i < count; i++){
-//                fin >> val;
-//                vals.push_back(val);
-//            }
-//            cha.push_back(vals);
-//        }
-//        catch(const std::exception& e){
-//            std::cout << e.what() << std::endl;
-//        }
-//    }
-//    opconfig config(names, cha); 
-//    return config;
-//}

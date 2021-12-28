@@ -6,6 +6,20 @@
 // move right - 3
 // move left - 4
 // pick and object
+Character* Game::getCurPlayer(){
+    if(a_team){
+        return l_curplayer->first; 
+    }
+    return l_curenemy->first;
+}
+
+std::pair<unsigned int, unsigned int> Game::getCurPos(){
+    if(a_team){
+        return l_curplayer->second;
+    }
+    return l_curenemy->second;
+}
+
 
 void Game::newRound(){
     std::list<std::pair<OpAgent*, std::pair<unsigned int, unsigned int>>> dead;
@@ -19,7 +33,7 @@ void Game::newRound(){
     }
     l_lvl.getPlayers().remove_if([](std::pair<OpAgent*, std::pair<unsigned int, unsigned int>> x){return x.first->getCurHealth() == 0;});
     
-    Field fi = l_lvl.getField();
+    Field& fi = l_lvl.getField();
     for(auto i: dead){
         unsigned int x, y;
         x = i.second.first;
@@ -47,7 +61,6 @@ void Game::newRound(){
     }
     l_lvl.getEnemies().remove_if([](std::pair<Character*, std::pair<unsigned int, unsigned int>> x){return x.first->getCurHealth() == 0;});
     
-    Field fi1 = l_lvl.getField();
     for(auto i: dead1){
         unsigned int x, y;
         x = i.second.first;
@@ -61,8 +74,8 @@ void Game::newRound(){
         if(i.first->isSmart() && dynamic_cast<SmartBeast*>(i.first)->getHand()){
             l_lvl.throwItem(x,y, dynamic_cast<SmartBeast*>(i.first)->getHand());
         }
-        auto tmp = fi1.a_field[x][y].p_player;
-        fi1.a_field[x][y].p_player = nullptr;
+        auto tmp = fi.a_field[x][y].p_player;
+        fi.a_field[x][y].p_player = nullptr;
         delete tmp;
     }
     l_curplayer = l_lvl.l_players.begin();
@@ -78,13 +91,21 @@ void Game::action(Actions act, unsigned int x1, unsigned int y1){
         a_x = l_curplayer->second.first; 
         a_y = l_curplayer->second.second;
         std::cout << *l_curplayer->first << std::endl;
+        std::cout << dynamic_cast<OpAgent*>(l_curplayer->first)->getCurWeight() << " werignhf" << std::endl;
+        if(l_curplayer->first->getCurHealth() == 0){
+            act = Actions::skip;
+        }
     }
     else{
         a_x = l_curenemy->second.first; 
         a_y = l_curenemy->second.second;
         std::cout << *l_curenemy->first << std::endl;
+        if(l_curenemy->first->getCurHealth() == 0){
+            act = Actions::skip;
+        }
     }
-    
+    std::cout << a_x << " " << a_y << "current" << std::endl;
+
     switch(act){
         case Actions::mup:
             {
@@ -183,7 +204,8 @@ void Game::action(Actions act, unsigned int x1, unsigned int y1){
                     if(r->isTrooper()){
                         auto ka = dynamic_cast<OpAgent*>(r);
                         if(x1 != 0){
-                            l_lvl.getField().a_field[a_x][a_y].l_items.push_back(ka->throwItem(x1));
+                            auto tm = ka->throwItem(x1);
+                            l_lvl.getField().a_field[a_x][a_y].l_items.push_back(tm);
                         }
                         else{
                             l_lvl.getField().a_field[a_x][a_y].l_items.push_back(ka->throwHand());
@@ -203,8 +225,27 @@ void Game::action(Actions act, unsigned int x1, unsigned int y1){
                 }
                 break;          
             }
+        default:
+            break;
     }
     checkRound(sk);
+    if(!a_endr){
+        if(a_team){
+            a_x = l_curplayer->second.first; 
+            a_y = l_curplayer->second.second;
+            std::cout << *l_curplayer->first << std::endl;
+        }
+        else{
+            a_x = l_curenemy->second.first; 
+            a_y = l_curenemy->second.second;
+            std::cout << *l_curenemy->first << std::endl;
+        }
+        std::cout << a_x << " " << a_y << "step_done" << std::endl;
+    }
+    else{
+        std::cout << "end  of round " << std::endl;
+    }
+    
 }
 
 void Game::checkRound(bool skip){

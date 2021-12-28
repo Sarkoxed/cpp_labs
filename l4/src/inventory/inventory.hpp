@@ -24,6 +24,8 @@ class Inventory{
         Item* extract(unsigned int inv);
         std::map<unsigned int, Item*>* getTable() {return &a_table;}
 
+        std::vector<std::string> toString() const;
+
         Item* operator[](unsigned int inv);
         ~Inventory() = default;
 };

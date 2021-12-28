@@ -40,3 +40,12 @@ Item* Inventory::operator[](unsigned int inv){
     throw std::out_of_range("no such an element");
 }
 
+std::vector<std::string> Inventory::toString()const{
+    std::vector<std::string> ans;
+    for(auto i: a_table){
+        if(i.second != nullptr){
+        ans.push_back(std::to_string(i.first) + " " + std::string(*i.second));
+        }
+    }
+    return ans;
+}

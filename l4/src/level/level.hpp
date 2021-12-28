@@ -59,7 +59,14 @@ class Level{
         void attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
         void changeCell(unsigned int x, unsigned int y, unsigned int x1, unsigned int y1);
         void pickItem(unsigned int x, unsigned int y, unsigned int num, Item* it);
+        void pickHand(unsigned int x, unsigned int y, unsigned int num);
+        void throwItem(unsigned int x, unsigned int y, unsigned int num);
         void throwItem(unsigned int x, unsigned int y, Item* it);
+        void throwHand(unsigned int x, unsigned int y);
+        void handToInv(unsigned int x, unsigned int y, unsigned int num);
+
+        std::vector<std::string> getInv(unsigned int, unsigned int) const;
+        std::vector<std::string> getIt(unsigned int, unsigned int) const;
 
         void save(const std::string& filename);
         
