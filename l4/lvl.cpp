@@ -12,7 +12,10 @@ int main(){
  //   auto ma = getconf("config/map.json");
 
  //   Level lvl(ma, wep, op, be, 3);
-    nlohmann::json cc = getconf("kuka2");
+ 
+    std::string ccccc;
+    std::cin >> ccccc;
+    nlohmann::json cc = getconf(ccccc);
     Level lvl(cc);
     std::cout << lvl;
    // lvl.save("kuka2");
@@ -27,12 +30,16 @@ int main(){
             if(choice == 8){
                 std::cin >> x >> y;
             }
+            else if(choice == 5 || choice == 6 || choice == 7 || choice == 9){
+                std::cin >> x;
+            }
+            
             g.action(a[choice], x, y);
             std::cout << lvl << std::endl;
+            lvl.save("rara");
         }
         else{
             g.newRound();
         }
     }
-    std::cout << lvl << std::endl;
 }

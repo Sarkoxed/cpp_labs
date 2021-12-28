@@ -24,16 +24,15 @@ SFML_INCL=../SFML/include
 SRC_DIR=src
 TOOLS=tools
 
-SRC = src/game/*.cpp
 SRC = $(SRC_DIR)/**/*.cpp tools/toolib.cpp
 
 .default: game.out
 
 game.out: game.o
-	clang++ -g -ggdb -fsanitize=address *.o -o game.out -L $(SFML_DIR)/lib -Wl,-rpath $(SFML_DIR)/lib -lsfml-graphics -lsfml-window -lsfml-system
+	clang++ -g -ggdb -fsanitize=address *.o -o game.out -lsfml-graphics -lsfml-window -lsfml-system
 
 game.o: $(SRC) 
-	clang++ -c $(SRC) -I $(SFML_INCL) -g -ggdb -fsanitize=address
+	clang++ -c $(SRC) -g -ggdb -fsanitize=address
 
 
 .PHONY: clean
