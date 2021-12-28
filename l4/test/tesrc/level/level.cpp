@@ -540,7 +540,7 @@ void Level::attack(unsigned int x, unsigned int y, unsigned int x1, unsigned int
 
 void Level::pickItem(unsigned int x, unsigned int y, unsigned int num, Item* it){
     Character* p = a_field.a_field[x][y].p_player;
-    if(p->isWild() || p->isSmart()){
+    if(p->isWild()){
         throw std::invalid_argument("not a pickable");
     }
     else if(p->isSmart()){
