@@ -34,9 +34,33 @@ class Bandolier:public Item{
         WeaponType getType() const { return a_bullets; };
         void setType(WeaponType type, unsigned int amo = 0);
 
-        const bool isWeapon() const{ return false; }
-        const bool isMedkit() const{ return false; }
-        const bool isAmmo() const{ return true; }
+        const bool isWeapon() const override{ return false; }
+        const bool isMedkit() const override{ return false; }
+        const bool isAmmo() const override{ return true; }
 
+        explicit operator std::string() const override{
+            std::string ans("Bandolier ");
+            switch(a_bullets){
+                case WeaponType::pistol:
+                    ans += "pistol ";
+                    break;
+                case WeaponType::grenade:
+                    ans += "grenade ";
+                    break;
+                case WeaponType::canon:
+                    ans+= "canon";
+                    break;
+                case WeaponType::rifle:
+                    ans+="rifle ";
+                    break;
+                case WeaponType::shotgun:
+                    ans+="shotgun ";
+                    break;
+            }
+            ans += "Weight = "  + std::to_string(a_weight);
+            ans += "Bullets: " + std::to_string(a_cursize) + " \\ " + std::to_string(a_maxsize);
+            return ans;
+
+        }
         ~Bandolier() = default;
 };
