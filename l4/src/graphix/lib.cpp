@@ -72,7 +72,7 @@ void redrawPlane(Game& game, sf::RenderWindow& window, texs& tex, sf::Sprite& sp
     //font.loadFromFile("fonts/SeasideResortNF/SEASRN__.ttf");
     sf::Text text;
     text.setFont(font);
-    text.setCharacterSize(10);
+    text.setCharacterSize(chsize);
     text.setFillColor(sf::Color::Red);
 
     for(int i = 0; i < hei; i++){
@@ -108,33 +108,33 @@ void redrawPlane(Game& game, sf::RenderWindow& window, texs& tex, sf::Sprite& sp
                 }
             }
 
-            a.x = 32*j;
-            a.y = 32*i;
+            a.x = size * j;
+            a.y = size * i;
             sprite.setPosition(a);
             window.draw(sprite);
 
-            a.x = 32*j + 10;
-            a.y = 32*i + 20;
+            a.x = size * j + 40;
+            a.y = size * i + 80;
 
             text.setPosition(a);
             window.draw(text);
         }
     }
-    for(int j = 0; j < 16; j++){
+    for(int j = 0; j < st + inv ; j++){
     for(int i = 0; i < hei; i++){
         sprite.setTexture(tex.white_tex);
-        a.x = 32*(wid + j);
-        a.y = 32*i;
+        a.x = size * (wid + j);
+        a.y = size * i;
         sprite.setPosition(a);
         window.draw(sprite);
     }
     }
     std::vector<std::string> its = game.getLvl().getIt(pos.first, pos.second);
-    for(int j = 0; j < 5; j++){
-    for(int i = 0; i < wid+6; i++){
+    for(int j = 0; j < it; j++){
+    for(int i = 0; i < wid + st; i++){
         sprite.setTexture(tex.white_tex);
-        a.x = 32*i;
-        a.y = 32*(hei + j);
+        a.x = size*i;
+        a.y = size*(hei + j);
         sprite.setPosition(a);
         window.draw(sprite);
     }
@@ -143,32 +143,50 @@ void redrawPlane(Game& game, sf::RenderWindow& window, texs& tex, sf::Sprite& sp
     int aa = 0;
     for(auto i: its){
         text.setString(i);
-        a.x = 5;
-        a.y = 10 + (aa++)*20 + 31*hei;
+        a.x = it;
+        a.y = 10 + (aa++)*40 + (size - 1)*hei;
         text.setPosition(a);
         window.draw(text);
     }
     
     text.setFillColor(sf::Color::White);
 
+    sf::Sprite spr;
+
+    sf::Sprite gun;
+    gun.setTexture(tex.gun_tex);
+
     for(auto i: game.getLvl().getPlayers()){
         int dist = floor(sqrt(pow(static_cast<int>(pos.first - i.second.first),2) + pow(static_cast<int>(pos.second - i.second.second), 2)));
-        if(game.a_team || (!game.a_team && (dist <= radius))){
+        //if(game.a_team || (!game.a_team && (dist <= radius))){
+        if(true){
             if(i.first->getCurHealth() == 0){
-                sprite.setTexture(tex.deadp_tex);
+                spr.setTexture(tex.deadp_tex);
             }
             else{
-                sprite.setTexture(tex.troop_tex);
+                spr.setTexture(tex.troop_tex);
             }
+            text.setCharacterSize(chsize);
+            text.setFillColor(sf::Color::Cyan);
             text.setString(i.first->getName()); 
 
-            a.x = i.second.second * 32 + 5;
-            a.y = i.second.first * 32 + 6;
-            sprite.setPosition(a);
-            window.draw(sprite);
+            a.x = i.second.second * size + 28;
+            a.y = i.second.first * size + 28;
+            spr.setPosition(a);
+            window.draw(spr);
+            if(i.first->getHand()){
+                a.x = i.second.second * size + 60;
+                a.y = i.second.first * size + 60;
+                gun.setPosition(a);
+                window.draw(gun);
+            }
+            
+            a.x = i.second.second * size + 36;
+            a.y = i.second.first * size + 28;
+
 
             a.x = a.x;
-            a.y = a.y - 5;
+            a.y = a.y - 40;
             text.setPosition(a);
             window.draw(text);
         }
@@ -177,25 +195,33 @@ void redrawPlane(Game& game, sf::RenderWindow& window, texs& tex, sf::Sprite& sp
     
     for(auto i: game.getLvl().getEnemies()){
         int dist = floor(sqrt(pow(static_cast<int>(pos.first - i.second.first),2) + pow(static_cast<int>(pos.second - i.second.second), 2)));
-        if(!game.a_team || (game.a_team && dist <= radius)){
+            if(true){
+        //if(!game.a_team || (game.a_team && dist <= radius)){
             if(i.first->getCurHealth() != 0 ){
                 if(i.first->isWild()){
-                    sprite.setTexture(tex.wild_tex);
+                    spr.setTexture(tex.wild_tex);
                 }
                 else if(i.first->isSmart()){
-                    sprite.setTexture(tex.smart_tex);
+                    spr.setTexture(tex.smart_tex);
                 }
                 else{
-                    sprite.setTexture(tex.forager_tex);
+                    spr.setTexture(tex.forager_tex);
                 }
             }
             else{
-                sprite.setTexture(tex.deadbe_tex);
+                spr.setTexture(tex.deadbe_tex);
             }
-            a.x = i.second.second * 32 + 5;
-            a.y = i.second.first * 32 + 5;
-            sprite.setPosition(a);
-            window.draw(sprite);
+
+            if(i.first->isSmart() && dynamic_cast<SmartBeast*>(i.first)->getHand()){
+                a.x = i.second.second * size + 60;
+                a.y = i.second.first * size + 60;
+                gun.setPosition(a);
+                window.draw(gun);
+            }
+            a.x = i.second.second * size + 20;
+            a.y = i.second.first * size + 20;
+            spr.setPosition(a);
+            window.draw(spr);
         }
     }
 
@@ -233,7 +259,7 @@ void handleEvents(Game& game, sf::RenderWindow& window, sf::Event& event, texs& 
                     case sf::Keyboard::R:
                         {
                             sf::Vector2i pos = sf::Mouse::getPosition(window);
-                            int po = (pos.x/32 - wid) + 16 * (pos.y / 32 - hei);
+                            int po = (pos.x/size - wid) + (inv + st) * (pos.y / size - hei);
                             game.action(Actions::reload, po);
                             break;
                         }
@@ -246,7 +272,7 @@ void handleEvents(Game& game, sf::RenderWindow& window, sf::Event& event, texs& 
                                 break;
                             }
                             sf::Vector2i pos = sf::Mouse::getPosition(window);
-                            int po = (pos.x/32 - wid) + 16 * (pos.y / 32 - hei);
+                            int po = (pos.x/size - wid) + (inv + st) * (pos.y / size - hei);
                             game.action(Actions::picki, po);
                             break;
                         }
@@ -256,14 +282,14 @@ void handleEvents(Game& game, sf::RenderWindow& window, sf::Event& event, texs& 
                                 break;
                             }
                             sf::Vector2i pos = sf::Mouse::getPosition(window);
-                            int po = (pos.x/32 - wid) + 16 * (pos.y / 32 - hei);
+                            int po = (pos.x/size - wid) + (inv + st) * (pos.y / size - hei);
                             game.action(Actions::throwi, po);
                             break;
                         }
                     case sf::Keyboard::O:
                         {
                             sf::Vector2i pos = sf::Mouse::getPosition(window);
-                            int po = (pos.x/32 - wid) + 16 * (pos.y / 32 - hei);
+                            int po = (pos.x/size - wid) + (inv + st) * (pos.y / size - hei);
                             game.action(Actions::heal, po);
                             break;
                         }
@@ -275,8 +301,8 @@ void handleEvents(Game& game, sf::RenderWindow& window, sf::Event& event, texs& 
             case sf::Event::MouseButtonPressed:
                 {
                     sf::Vector2i pos = sf::Mouse::getPosition(window);
-                    std::cout << pos.x / 32 << " " << pos.y/32 << std::endl;
-                    game.action(Actions::shootxy, pos.y/32, pos.x/32);
+                    std::cout << pos.x / size << " " << pos.y/size << std::endl;
+                    game.action(Actions::shootxy, pos.y/size, pos.x/size);
                     break;
                 }
             default:
@@ -302,7 +328,7 @@ void drawInv(Game& game, sf::RenderWindow& window, texs& tex){
     //font.loadFromFile("fonts/SeasideResortNF/SEASRN__.ttf");
     sf::Text text;
     text.setFont(font);
-    text.setCharacterSize(10);
+    text.setCharacterSize(chsize);
     text.setFillColor(sf::Color::Black);
 
     int p = 0;
@@ -318,8 +344,8 @@ void drawInv(Game& game, sf::RenderWindow& window, texs& tex){
     }
     for(auto i: items){
         text.setString(i);
-        a.x = (wid+5) * 32 + 6;
-        a.y = (p++)*20 + 5;
+        a.x = (wid+it) * size + st;
+        a.y = (p++)*40 + 5;
         text.setPosition(a);
         window.draw(text);    
     }
@@ -337,22 +363,22 @@ void drawPad(Game& game,sf::RenderWindow& window,texs& tex){
     //font.loadFromFile("fonts/SeasideResortNF/SEASRN__.ttf");
     sf::Text text;
     text.setFont(font);
-    text.setCharacterSize(10);
+    text.setCharacterSize(chsize);
     text.setFillColor(sf::Color::Black);
     sf::Sprite sprite;
     sprite.setTexture(tex.pad_tex);
 
-    for(int i = hei; i < hei+5; i++){
-        for(int j = wid; j < wid+16; j++){
-            a.x = 32*j;
-            a.y = 32*i;
+    for(int i = hei; i < hei+it; i++){
+        for(int j = wid; j < wid+inv + st; j++){
+            a.x = size*j;
+            a.y = size*i;
             sprite.setPosition(a);
             window.draw(sprite);
 
-            a.x = a.x + 16;
-            a.y = a.y + 16;
+            a.x = a.x + size / 2;
+            a.y = a.y + size / 2;
             text.setPosition(a);
-            int pos = (j - wid) + (i-hei) * 16;
+            int pos = (j - wid) + (i-hei) * (inv + st);
             text.setString(std::to_string(pos));
             window.draw(text);
         }
@@ -364,10 +390,10 @@ void drawLose(sf::RenderWindow &window, texs &tex){
     sf::Sprite sprite;
     sprite.setTexture(tex.lose_tex);
     sf::Vector2f a;
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-            a.x = j*200;
-            a.y = i*200;
+    for(int i = 0; i < 6; i++){
+        for(int j = 0; j < 6; j++){
+            a.x = j*800;
+            a.y = i*800;
             sprite.setPosition(a);
             window.draw(sprite);
         }
@@ -378,10 +404,10 @@ void drawWin(sf::RenderWindow &window, texs &tex){
     sf::Sprite sprite;
     sprite.setTexture(tex.win_tex);
     sf::Vector2f a;
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-            a.x = j*100;
-            a.y = i*100;
+    for(int i = 0; i < 12; i++){
+        for(int j = 0; j < 12; j++){
+            a.x = j*400;
+            a.y = i*400;
             sprite.setPosition(a);
             window.draw(sprite);
         }
@@ -400,7 +426,7 @@ void drawstats(Game& game, sf::RenderWindow& window){
     //font.loadFromFile("fonts/SeasideResortNF/SEASRN__.ttf");
     sf::Text text;
     text.setFont(font);
-    text.setCharacterSize(15);
+    text.setCharacterSize(chsize + 20);
     text.setFillColor(sf::Color::Black);
     int width = game.getLvl().getSize().second;
     
@@ -411,8 +437,8 @@ void drawstats(Game& game, sf::RenderWindow& window){
     std::vector<std::string> stats = getStats(ch);
     stats.push_back(std::string("Current Position: ") + std::to_string(pos.first) + std::string(", ") + std::to_string(pos.second)); 
     for(int i = 0; i < stats.size(); i++){
-        a.x = width*31 + 3;
-        a.y = i*20;
+        a.x = width*(size - 1) + 3;
+        a.y = i*40;
         text.setString(stats[i]);
         text.setPosition(a);
         window.draw(text);                

@@ -4,6 +4,10 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "../game/game.hpp"
 
+const int st = 6, it = 5, inv = 10;
+const int size = 128;
+const int chsize = 25;
+
 struct ims{
     sf::Image troop_im;
     sf::Image wall_im;

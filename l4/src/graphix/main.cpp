@@ -10,18 +10,11 @@ int main(){
     Level lvl(cc);
     Game game(lvl);
 
-    int st = 6, it = 5, inv = 10;
-
-    sf::RenderWindow window(sf::VideoMode(32*(lvl.getSize().first + st + inv), 32*(lvl.getSize().second + it)), "operation", sf::Style::Default);
-    sf::Clock clock;
-    float time;
+    sf::RenderWindow window(sf::VideoMode(size*(lvl.getSize().first + st + inv), size*(lvl.getSize().second + it)), "operation", sf::Style::Default);
     
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
     
-    time = clock.getElapsedTime().asMilliseconds();
-    clock.restart();
-     
     ims im = getIms();
     texs tex = getTex(im);
     

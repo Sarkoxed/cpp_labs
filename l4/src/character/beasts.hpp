@@ -35,7 +35,9 @@ class SmartBeast: public Character{
         const bool isWild() const override{ return false; };
         const bool isSmart() const override{ return true;};
         const bool isForager() const override{ return false;};
-        ~SmartBeast() = default;
+        ~SmartBeast(){
+            delete a_hands;
+        };
 };
 
 class ForagerBeast: public Character{

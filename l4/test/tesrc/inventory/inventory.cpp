@@ -49,3 +49,9 @@ std::vector<std::string> Inventory::toString()const{
     }
     return ans;
 }
+
+Inventory::~Inventory(){
+    for(auto i: a_table){
+        delete i.second;
+    }
+}

@@ -27,5 +27,5 @@ class Inventory{
         std::vector<std::string> toString() const;
 
         Item* operator[](unsigned int inv);
-        ~Inventory() = default;
+        ~Inventory();
 };

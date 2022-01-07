@@ -566,7 +566,7 @@ void Level::pickItem(unsigned int x, unsigned int y, unsigned int num, Item* it)
 void Level::handToInv(unsigned int x, unsigned int y, unsigned int  num){
     auto p = a_field.a_field[x][y].p_player;
     if(p->isBeast()){
-        throw std::invalid_argument("not an option");
+        throw std::invalid_argument("not an option4");
     }
 
     auto r = dynamic_cast<OpAgent*>(p);
@@ -576,7 +576,7 @@ void Level::handToInv(unsigned int x, unsigned int y, unsigned int  num){
 void Level::throwItem(unsigned int x, unsigned int y,unsigned int num){
     auto p = a_field.a_field[x][y].p_player;
     if(p->isWild() || p->isSmart()){
-        throw std::invalid_argument("not an option");
+        throw std::invalid_argument("not an option3");
     }
     if(p->isTrooper()){
         a_field.a_field[x][y].l_items.push_back(dynamic_cast<OpAgent*>(p)->getInventory().extract(num));
@@ -587,8 +587,8 @@ void Level::throwItem(unsigned int x, unsigned int y,unsigned int num){
 }
 void Level::throwItem(unsigned int x, unsigned int y,Item* it){
     auto p = a_field.a_field[x][y].p_player;
-    if(p->isWild() || p->isSmart()){
-        throw std::invalid_argument("not an option");
+    if(p->isWild()){
+        throw std::invalid_argument("not an option2");
     }
     a_field.a_field[x][y].l_items.push_back(it);
 }
@@ -597,7 +597,7 @@ void Level::throwItem(unsigned int x, unsigned int y,Item* it){
 void Level::throwHand(unsigned int x, unsigned int y){
     auto p = a_field.a_field[x][y].p_player;
     if(p->isForager() || p->isWild()){
-        throw std::invalid_argument("not an option");
+        throw std::invalid_argument("not an option1");
     }
     if(p->isTrooper()){
         auto tmp = dynamic_cast<OpAgent*>(p)->throwHand();

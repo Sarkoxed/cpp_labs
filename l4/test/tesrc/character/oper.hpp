@@ -41,5 +41,7 @@ class OpAgent: public Character{
         const bool isSmart() const override{ return false;};
         const bool isForager() const override{ return false;};
 
-        ~OpAgent() = default;
+        ~OpAgent(){
+            delete a_hands;
+        }
 };
